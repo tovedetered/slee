@@ -19,10 +19,10 @@ pub fn main() !void {
 
 
         if(std.ascii.isControl(c)){
-            try stdinwrite.print("{d}\n", .{c});
+            try stdinwrite.print("{d}\r\n", .{c});
         }
         else{
-            try stdinwrite.print("{d} ('{c}')\n", .{c, c});
+            try stdinwrite.print("{d} ('{c}')\r\n", .{c, c});
         }
     }
 }
@@ -34,8 +34,13 @@ fn enableRawMode() !posix.termios{
 
     raw.iflag.IXON = false;
     raw.iflag.ICRNL = false;
+    raw.iflag.BRKINT = false;
+    raw.iflag.INPCK = false;
+    raw.iflag.ISTRIP = false;
 
     raw.oflag.OPOST = false;
+
+    raw.cflag.CSIZE = .CS8;
 
     raw.lflag.ECHO = false;
     raw.lflag.ICANON = false;
