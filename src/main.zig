@@ -32,10 +32,12 @@ fn enableRawMode() !posix.termios{
     const original = try posix.tcgetattr(fd);
     var raw = original;
 
+    raw.iflag.IXON = false;
+
     raw.lflag.ECHO = false;
     raw.lflag.ICANON = false;
     raw.lflag.ISIG = false;
-    raw.iflag.IXON = false;
+    raw.lflag.ISIG = fasle;
 
     try posix.tcsetattr(fd, .FLUSH, raw);
     return original;
