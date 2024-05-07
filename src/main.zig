@@ -33,11 +33,12 @@ fn enableRawMode() !posix.termios{
     var raw = original;
 
     raw.iflag.IXON = false;
+    raw.iflag.ICRNL = false;
 
     raw.lflag.ECHO = false;
     raw.lflag.ICANON = false;
     raw.lflag.ISIG = false;
-    raw.lflag.ISIG = false;
+    raw.lflag.IEXTEN = false;
 
     try posix.tcsetattr(fd, .FLUSH, raw);
     return original;
