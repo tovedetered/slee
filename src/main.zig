@@ -2,19 +2,28 @@ const std = @import("std");
 const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
-const c = @import("std").c;
 
 pub fn main() !void {
     const original = try enableRawMode();
     defer _= disableRawMode(original);
 
-    const stdin = io.getStdIn().reader();
+    const stdinread = io.getStdIn().reader();
+    const stdinwrite = io.getStdIn().writer();
     var buf: [1]u8 = undefined;
 
     while (true) {
-        const n = try stdin.read(buf[0..]);
+        const n = try stdinread.read(buf[0..]);
+        const c = buf[0];
         if (n != 1) break;
         if(buf[0] == 'q') break;
+
+
+        if(std.ascii.isControl(c)){
+            try stdinwrite.print("{d}\n", .{c});
+        }
+        else{
+            try stdinwrite.print("{d} ('{c}')\n", .{c, c});
+        }
     }
 }
 
