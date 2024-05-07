@@ -12,6 +12,7 @@ pub fn main() !void {
     var buf: [1]u8 = undefined;
 
     while (true) {
+        buf[0] = std.ascii.control_code.nul;
         const n = try stdinread.read(buf[0..]);
         const c = buf[0];
         if (n != 1) break;
@@ -46,6 +47,8 @@ fn enableRawMode() !posix.termios{
     raw.lflag.ICANON = false;
     raw.lflag.ISIG = false;
     raw.lflag.IEXTEN = false;
+
+    raw.cc.len = 1;
 
     try posix.tcsetattr(fd, .FLUSH, raw);
     return original;
