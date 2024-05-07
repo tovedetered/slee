@@ -48,7 +48,8 @@ fn enableRawMode() !posix.termios{
     raw.lflag.ISIG = false;
     raw.lflag.IEXTEN = false;
 
-    raw.cc.len = 1;
+    raw.cc[@intFromEnum(posix.V.MIN)] = 1;
+    raw.cc[@intFromEnum(posix.V.TIME)] = 0;
 
     try posix.tcsetattr(fd, .FLUSH, raw);
     return original;
