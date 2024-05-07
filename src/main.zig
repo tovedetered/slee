@@ -35,6 +35,8 @@ fn enableRawMode() !posix.termios{
     raw.iflag.IXON = false;
     raw.iflag.ICRNL = false;
 
+    raw.oflag.OPOST = false;
+
     raw.lflag.ECHO = false;
     raw.lflag.ICANON = false;
     raw.lflag.ISIG = false;
