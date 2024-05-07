@@ -3,6 +3,7 @@ const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
 const terminal = @import("./terminal.zig");
+const util = @import("./utilities.zig");
 
 pub fn main() !void {
     const original = try terminal.enableRawMode();
@@ -17,7 +18,7 @@ pub fn main() !void {
         const n = try stdinread.read(buf[0..]);
         const c = buf[0];
         if (n != 1) break;
-        if(buf[0] == 'q') break;
+        if(c == util.ctrlKey('q')) break;
 
 
         if(std.ascii.isControl(c)){

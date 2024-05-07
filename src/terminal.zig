@@ -3,7 +3,7 @@ const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
 
-fn enableRawMode() !posix.termios{
+pub fn enableRawMode() !posix.termios{
     const fd = io.getStdIn().handle;
     const original = try posix.tcgetattr(fd);
     var raw = original;
@@ -30,7 +30,7 @@ fn enableRawMode() !posix.termios{
     return original;
 }
 
-fn disableRawMode(terminal: posix.termios) void{
+pub fn disableRawMode(terminal: posix.termios) void{
     const fd = io.getStdIn().handle;
     posix.tcsetattr(fd, .FLUSH, terminal) catch |err|{
         std.log.err("{any}", .{err});
