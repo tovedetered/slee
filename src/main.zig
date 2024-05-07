@@ -34,6 +34,7 @@ fn enableRawMode() !posix.termios{
 
     raw.lflag.ECHO = false;
     raw.lflag.ICANON = false;
+    raw.lflag.ISIG = false;
 
     try posix.tcsetattr(fd, .FLUSH, raw);
     return original;
