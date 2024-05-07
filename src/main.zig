@@ -6,7 +6,8 @@ const c = @import("std").c;
 
 pub fn main() !void {
     const original = try enableRawMode();
-    defer disableRawMode(original);
+    defer _= disableRawMode(original);
+
     const stdin = io.getStdIn().reader();
     var buf: [1]u8 = undefined;
 
@@ -21,12 +22,18 @@ fn enableRawMode() !posix.termios{
     const fd = io.getStdIn().handle;
     const original = try posix.tcgetattr(fd);
     var raw = original;
+
     raw.lflag.ECHO = false;
+    raw.lflag.ICANON = false;
+
     try posix.tcsetattr(fd, .FLUSH, raw);
     return original;
 }
 
-fn disableRawMode(terminal: posix.termios) !void{
+fn disableRawMode(terminal: posix.termios) void{
     const fd = io.getStdIn().handle;
-    try posix.tcsetattr(fd, .FLUSH, terminal);
+    posix.tcsetattr(fd, .FLUSH, terminal) catch |err|{
+        std.log.err("{any}", .{err});
+        std.posix.exit(1);
+    };
 }
