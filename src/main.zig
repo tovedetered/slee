@@ -5,12 +5,14 @@ const os = @import("std").os;
 const terminal = @import("./terminal.zig");
 const util = @import("./utilities.zig");
 const input = @import("./input.zig");
+const out = @import("./output.zig");
 
 pub fn main() !void {
     const original = try terminal.enableRawMode();
     defer terminal.disableRawMode(original);
 
     while (true) {
+        try out.editorRefreshScreen();
         const op = try input.editorProcessKeyPress();
         switch (op) {
             .Quit => break,
