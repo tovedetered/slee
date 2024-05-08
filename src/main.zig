@@ -16,15 +16,16 @@ pub fn main() !void {
         const op = try input.editorProcessKeyPress();
         switch (op) {
         .Quit => {
-            out.editorRefreshScreen();
+            try out.editorRefreshScreen();
+            break;
         },
         else => {},
         }
     }
 }
 
-pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace) noreturn {
+pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace, n:?usize) noreturn {
     io.getStdOut().writeAll("\x1b[2J") catch {};
     io.getStdOut().writeAll("\x1b[H") catch {};
-    std.builtin.default_panic(msg, error_return_trace);
+    std.builtin.default_panic(msg, error_return_trace, n);
 }
