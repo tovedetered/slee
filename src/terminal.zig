@@ -3,6 +3,10 @@ const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
 
+const termError = error{
+    read,
+};
+
 pub fn enableRawMode() !posix.termios{
     const fd = io.getStdIn().handle;
     const original = try posix.tcgetattr(fd);
@@ -36,4 +40,13 @@ pub fn disableRawMode(terminal: posix.termios) void{
         std.log.err("{any}", .{err});
         std.posix.exit(1);
     };
+}
+
+pub fn editorReadKey() !u8 {
+    const stdinread = io.getStdIn().reader();
+    var buf:[1] u8 = undefined;
+    buf[0] = 0;
+    const n = try stdinread.read(buf[0..]);
+    if (n == -1) {return termError.read;}
+    return buf[0];
 }
