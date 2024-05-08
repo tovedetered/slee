@@ -7,9 +7,11 @@ const util = @import("./utilities.zig");
 const input = @import("./input.zig");
 const out = @import("./output.zig");
 
+
+
 pub fn main() !void {
-    const original = try terminal.enableRawMode();
-    defer terminal.disableRawMode(original);
+    try terminal.enableRawMode();
+    defer terminal.disableRawMode();
 
     while (true) {
         try out.editorRefreshScreen();

@@ -2,15 +2,16 @@ const std = @import("std");
 const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
+const data = @import("./data.zig");
 
 const termError = error{
-    read,
+read,
 };
 
-pub fn enableRawMode() !posix.termios{
+pub fn enableRawMode() !void {
     const fd = io.getStdIn().handle;
-    const original = try posix.tcgetattr(fd);
-    var raw = original;
+    data.editor.orig_terminos = try posix.tcgetattr(fd);
+    var raw = data.editor.orig_terminos;
 
     raw.iflag.IXON = false;
     raw.iflag.ICRNL = false;
@@ -31,12 +32,11 @@ pub fn enableRawMode() !posix.termios{
     raw.cc[@intFromEnum(posix.V.TIME)] = 0;
 
     try posix.tcsetattr(fd, .FLUSH, raw);
-    return original;
 }
 
-pub fn disableRawMode(terminal: posix.termios) void{
+pub fn disableRawMode() void{
     const fd = io.getStdIn().handle;
-    posix.tcsetattr(fd, .FLUSH, terminal) catch |err|{
+    posix.tcsetattr(fd, .FLUSH, data.editor.orig_terminos) catch |err|{
         std.log.err("{any}", .{err});
         std.posix.exit(1);
     };
