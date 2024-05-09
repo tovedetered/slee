@@ -3,9 +3,11 @@ const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
 const data = @import("./data.zig");
+const c = @import("std").c;
 
 const termError = error{
 read,
+window_size,
 };
 
 pub fn enableRawMode() !void {
@@ -49,4 +51,15 @@ pub fn editorReadKey() !u8 {
     const n = try stdinread.read(buf[0..]);
     if (n == -1) {return termError.read;}
     return buf[0];
+}
+
+pub fn getWindowSize(rows: *usize, cols: *usize) !void{
+    var ws = posix.winsize{};
+
+    if(os.linux.ioctl(io.getStdOut(), os.linux.T.IOCGWINSZ, &ws) == -1){
+        return termError.window_size;
+    }else{
+        cols.* = ws.ws_col;
+        rows.* = ws.ws_row;
+    }
 }
