@@ -14,7 +14,10 @@ pub fn editorRefreshScreen() !void {
 
     try editorDrawRows(&buf);
 
-    try buf.append("\x1b[H");
+    const setCursorPos = try std.fmt.allocPrint(std.heap.page_allocator,
+        "\x1b[{d};{d}H", .{data.input.cx + 1, data.input.cy + 1});
+    try buf.append(setCursorPos);
+
     try buf.append("\x1b[?25h");
 
     try io.getStdOut().writeAll(buf.b);
