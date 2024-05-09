@@ -52,6 +52,30 @@ pub fn editorReadKey() !u8 {
     buf[0] = 0;
     const n = try stdinread.read(buf[0..]);
     if (n == -1) {return termError.read;}
+    if(buf[0] == '\x1b'){
+        var seq:[3] u8 = undefined;
+        seq[0] = stdinread.readByte() catch |err| {
+            std.log.debug("\n ERROR {any} \n", .{err});
+            return '\x1b';
+        };
+        seq[1] = stdinread.readByte() catch |err| {
+            std.log.debug("\n ERROR {any} \n", .{err});
+            return '\x1b';
+        };
+
+        if(seq[0] == '['){
+            switch (seq[1]) {
+            'A' => return 'w',
+            'B' => return 's',
+            'C' => return 'd',
+            'D' => return 'a',
+            else => {},
+            }
+        }
+
+        return '\x1b';
+    }
+    
     return buf[0];
 }
 
