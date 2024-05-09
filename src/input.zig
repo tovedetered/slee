@@ -23,6 +23,18 @@ pub fn editorProcessKeyPress() !KeyAction{
         editorMoveCursor(c);
         return .NoOp;
     },
+    @intFromEnum(data.editorKey.PAGE_UP),
+    @intFromEnum(data.editorKey.PAGE_DOWN) => {
+        var times = data.editor.screenRows;
+        while(times > 0) : (times -= 1){
+            if(c == @intFromEnum(data.editorKey.PAGE_UP)){
+                editorMoveCursor(@intFromEnum(data.editorKey.ARROW_UP));
+            }else{
+                editorMoveCursor(@intFromEnum(data.editorKey.ARROW_DOWN));
+            }
+        }
+        return .NoOp;
+    },
     else => .NoOp
     };
 }
