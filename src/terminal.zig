@@ -64,12 +64,24 @@ pub fn editorReadKey() !u16 {
         };
 
         if(seq[0] == '['){
-            switch (seq[1]) {
-            'A' => return @intFromEnum(data.editorKey.ARROW_UP),
-            'B' => return @intFromEnum(data.editorKey.ARROW_DOWN),
-            'C' => return @intFromEnum(data.editorKey.ARROW_RIGHT),
-            'D' => return @intFromEnum(data.editorKey.ARROW_LEFT),
-            else => {},
+            if(seq[1] >= '0' and seq[1] <= '9'){
+                seq[2] = stdinread.readByte() catch |err| {
+                    std.log.debug("\n ERROR {any} \n", .{err});
+                    return '\x1b';
+                };
+                switch (seq[1]) {
+                '5' => return @intFromEnum(data.editorKey.PAGE_UP),
+                '6' => return @intFromEnum(data.editorKey.PAGE_DOWN),
+                else => {},
+                }
+            } else{
+                switch (seq[1]) {
+                'A' => return @intFromEnum(data.editorKey.ARROW_UP),
+                'B' => return @intFromEnum(data.editorKey.ARROW_DOWN),
+                'C' => return @intFromEnum(data.editorKey.ARROW_RIGHT),
+                'D' => return @intFromEnum(data.editorKey.ARROW_LEFT),
+                else => {},
+                }
             }
         }
 
