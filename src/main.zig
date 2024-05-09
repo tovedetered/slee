@@ -6,12 +6,13 @@ const terminal = @import("./terminal.zig");
 const util = @import("./utilities.zig");
 const input = @import("./input.zig");
 const out = @import("./output.zig");
-
-
+const data = @import("./data.zig");
 
 pub fn main() !void {
     try terminal.enableRawMode();
     defer terminal.disableRawMode();
+
+    try initEditor();
 
     while (true) {
         try out.editorRefreshScreen();
@@ -30,4 +31,8 @@ pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace, n:?u
     io.getStdOut().writeAll("\x1b[2J") catch {};
     io.getStdOut().writeAll("\x1b[H") catch {};
     std.builtin.default_panic(msg, error_return_trace, n);
+}
+
+fn initEditor() !void{
+    try terminal.getWindowSize(&data.editor.screenRows, &data.editor.screenHeight);
 }

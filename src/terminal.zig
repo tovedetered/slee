@@ -53,10 +53,16 @@ pub fn editorReadKey() !u8 {
     return buf[0];
 }
 
-pub fn getWindowSize(rows: *usize, cols: *usize) !void{
-    var ws = posix.winsize{};
+pub fn getWindowSize(rows: *u16, cols: *u16) !void{
+    var ws = posix.winsize{
+        .ws_col = undefined,
+        .ws_row = undefined,
+        .ws_xpixel = undefined,
+        .ws_ypixel = undefined,
+    };
 
-    if(os.linux.ioctl(io.getStdOut(), os.linux.T.IOCGWINSZ, &ws) == -1){
+    if(os.linux.ioctl(os.linux.STDOUT_FILENO, os.linux.T.IOCGWINSZ,
+        @intFromPtr(&ws)) == -1){
         return termError.window_size;
     }else{
         cols.* = ws.ws_col;
