@@ -46,7 +46,7 @@ pub fn disableRawMode() void{
     };
 }
 
-pub fn editorReadKey() !u8 {
+pub fn editorReadKey() !u16 {
     const stdinread = io.getStdIn().reader();
     var buf:[1] u8 = undefined;
     buf[0] = 0;
@@ -65,17 +65,17 @@ pub fn editorReadKey() !u8 {
 
         if(seq[0] == '['){
             switch (seq[1]) {
-            'A' => return 'w',
-            'B' => return 's',
-            'C' => return 'd',
-            'D' => return 'a',
+            'A' => return @intFromEnum(data.editorKey.ARROW_UP),
+            'B' => return @intFromEnum(data.editorKey.ARROW_DOWN),
+            'C' => return @intFromEnum(data.editorKey.ARROW_RIGHT),
+            'D' => return @intFromEnum(data.editorKey.ARROW_LEFT),
             else => {},
             }
         }
 
         return '\x1b';
     }
-    
+
     return buf[0];
 }
 

@@ -3,6 +3,15 @@ const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
 
+//***** Enums *****
+
+pub const editorKey = enum(u16){
+    ARROW_LEFT = 1000,
+    ARROW_RIGHT = 1001,
+    ARROW_UP = 1002,
+    ARROW_DOWN = 1003,
+    };
+
 //***** Defs *****
 pub const EditorConfig = struct {
     orig_terminos: posix.termios,
