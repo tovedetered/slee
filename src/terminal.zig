@@ -62,17 +62,15 @@ pub fn getWindowSize(rows: *u16, cols: *u16) !void{
         .ws_xpixel = undefined,
         .ws_ypixel = undefined,
     };
-    _ = rows;
-    _ = cols;
     //NOTE: This is from zig ~0.13 this may change as it has for me
     //This only works on linux (I think) so you may have to find a more cross platform
     //solution if it is nessessary, but I use arch btw
     switch(posix.errno(os.linux.ioctl(os.linux.STDOUT_FILENO, os.linux.T.IOCGWINSZ,
         @intFromPtr(&ws)))){
-    //os.linux.E.SUCCESS => {
-    //    rows.* = ws.ws_row;
-    //    cols.* = ws.ws_col;
-    //},
+    os.linux.E.SUCCESS => {
+        rows.* = ws.ws_row;
+        cols.* = ws.ws_col;
+    },
 
     posix.E.BADF => return error.BadFileDescriptor,
     posix.E.INVAL => return error.InvalidRequest,
@@ -104,9 +102,11 @@ fn getCursorPosition(rows: *u16, cols: *u16) !void {
     buf[i] = 0;
     if(buf[0] != '\x1b' or buf[1] != '[') return error.cursor_pos;
 
-    var splits = std.mem.split(u8, buf[2..], ';');
+    var splits = std.mem.split(u8, buf[2..], ";");
     var line = splits.next();
-    rows = try std.fmt.parseInt(u16, line, 10);
+    std.debug.print("{any}", .{line.?});
+    rows.* = try std.fmt.parseInt(u16, line.?, 10);
     line = splits.next();
-    cols = try std.fmt.parseInt(u16, line, 10);
+    std.debug.print("{any}", .{line.?});
+    cols.* = try std.fmt.parseInt(u16, line.?, 10);
 }
