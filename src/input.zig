@@ -35,6 +35,14 @@ pub fn editorProcessKeyPress() !KeyAction{
         }
         return .NoOp;
     },
+    @intFromEnum(data.editorKey.HOME_KEY) => {
+        data.input.cx = 0;
+        return .NoOp;
+    },
+    @intFromEnum(data.editorKey.END_KEY) => {
+        data.input.cx = data.editor.screenCols - 1;
+        return .NoOp;
+    },
     else => .NoOp
     };
 }

@@ -6,11 +6,13 @@ const os = @import("std").os;
 //***** Enums *****
 pub const editorKey = enum(u16){
     ARROW_LEFT = 1000,
-    ARROW_RIGHT = 1001,
-    ARROW_UP = 1002,
-    ARROW_DOWN = 1003,
-    PAGE_UP = 1004,
-    PAGE_DOWN = 1005,
+    ARROW_RIGHT,
+    ARROW_UP,
+    ARROW_DOWN,
+    HOME_KEY,
+    END_KEY,
+    PAGE_UP,
+    PAGE_DOWN,
     };
 
 //***** Defs *****

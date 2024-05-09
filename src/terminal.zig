@@ -70,8 +70,12 @@ pub fn editorReadKey() !u16 {
                     return '\x1b';
                 };
                 switch (seq[1]) {
+                '1' => return @intFromEnum(data.editorKey.HOME_KEY),
+                '4' => return @intFromEnum(data.editorKey.END_KEY),
                 '5' => return @intFromEnum(data.editorKey.PAGE_UP),
                 '6' => return @intFromEnum(data.editorKey.PAGE_DOWN),
+                '7' => return @intFromEnum(data.editorKey.HOME_KEY),
+                '8' => return @intFromEnum(data.editorKey.END_KEY),
                 else => {},
                 }
             } else{
@@ -80,8 +84,16 @@ pub fn editorReadKey() !u16 {
                 'B' => return @intFromEnum(data.editorKey.ARROW_DOWN),
                 'C' => return @intFromEnum(data.editorKey.ARROW_RIGHT),
                 'D' => return @intFromEnum(data.editorKey.ARROW_LEFT),
+                'H' => return @intFromEnum(data.editorKey.HOME_KEY),
+                'F' => return @intFromEnum(data.editorKey.END_KEY),
                 else => {},
                 }
+            }
+        }else if(seq[0] == 'O'){
+            switch (seq[1]) {
+            'H' => return @intFromEnum(data.editorKey.HOME_KEY),
+            'F' => return @intFromEnum(data.editorKey.END_KEY),
+            else => {},
             }
         }
 
