@@ -35,5 +35,5 @@ pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace, n:?u
 }
 
 fn initEditor() !void{
-    try terminal.getWindowSize(&data.editor.screenRows, &data.editor.screenHeight);
+    try terminal.getWindowSize(&data.editor.screenRows, &data.editor.screenCols);
 }

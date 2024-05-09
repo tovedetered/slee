@@ -22,7 +22,20 @@ pub fn editorRefreshScreen() !void {
 
 pub fn editorDrawRows(ab: *abuf.abuf) !void {
     for(0..data.editor.screenRows) |y| {
-        try ab.*.append("~");
+        if(y == data.editor.screenRows/3){
+            const welcome:[] u8 = try std.fmt.allocPrint(std.heap.page_allocator,
+                "{s} Editor -- version: {s}",
+                .{data.editorName, data.version});
+            var padding:u16 = (data.editor.screenCols - welcome.len) / 2;
+            if(padding != 0){
+                try ab.append("~");
+                padding -= 1;
+            }
+            while(padding > 0) : (padding -= 1){try ab.append(" ");}
+            try ab.*.append(welcome);
+        }else{
+            try ab.*.append("~");
+        }
         try ab.*.append("\x1b[K");
         if(y < data.editor.screenRows - 1){
             try ab.*.append("\r\n");
