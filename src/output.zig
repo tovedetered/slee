@@ -3,20 +3,29 @@ const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
 const data = @import("./data.zig");
+const abuf = @import("./data-struct/abuf.zig");
 
 pub fn editorRefreshScreen() !void {
-    try io.getStdOut().writeAll("\x1b[2J");
-    try io.getStdOut().writeAll("\x1b[2J");
+    var buf = abuf.init(std.heap.page_allocator);
+    defer buf.free();
 
-    try editorDrawRows();
-    try io.getStdOut().writeAll("\x1b[H");
+    try buf.append("\x1b[?25l");
+    try buf.append("\x1b[H");
+
+    try editorDrawRows(&buf);
+
+    try buf.append("\x1b[H");
+    try buf.append("\x1b[?25h");
+
+    try io.getStdOut().writeAll(buf.b);
 }
 
-pub fn editorDrawRows() !void {
+pub fn editorDrawRows(ab: *abuf.abuf) !void {
     for(0..data.editor.screenRows) |y| {
-        try io.getStdOut().writeAll("~");
+        try ab.*.append("~");
+        try ab.*.append("\x1b[K");
         if(y < data.editor.screenRows - 1){
-            try io.getStdOut().writeAll("\r\n");
+            try ab.*.append("\r\n");
         }
     }
 }
