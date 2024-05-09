@@ -61,11 +61,22 @@ pub fn getWindowSize(rows: *u16, cols: *u16) !void{
         .ws_ypixel = undefined,
     };
 
-    if(os.linux.ioctl(os.linux.STDOUT_FILENO, os.linux.T.IOCGWINSZ,
-        @intFromPtr(&ws)) == -1){
-        return termError.window_size;
-    }else{
-        cols.* = ws.ws_col;
+    //NOTE: This is from zig ~0.13 this may change as it has for me
+    //This only works on linux (I think) so you may have to find a more cross platform
+    //solution if it is nessessary, but I use arch btw
+    switch(posix.errno(os.linux.ioctl(os.linux.STDOUT_FILENO, os.linux.T.IOCGWINSZ,
+        @intFromPtr(&ws)))){
+    os.linux.E.SUCCESS => {
         rows.* = ws.ws_row;
+        cols.* = ws.ws_col;
+    },
+    posix.E.BADF => return error.BadFileDescriptor,
+    posix.E.INVAL => return error.InvalidRequest,
+    posix.E.NOTTY => return error.NotATerminal,
+    else => {
+        try io.getStdOut().writeAll("\x1b[999C\x1b[999B");
+        _ = try editorReadKey();
+        return error.window_size;
+    }
     }
 }
