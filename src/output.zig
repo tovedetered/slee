@@ -14,7 +14,9 @@ pub fn editorRefreshScreen() !void {
 
 pub fn editorDrawRows() !void {
     for(0..data.editor.screenRows) |y| {
-        _ = y;
-        try io.getStdOut().writeAll("~\r\n");
+        try io.getStdOut().writeAll("~");
+        if(y < data.editor.screenRows - 1){
+            try io.getStdOut().writeAll("\r\n");
+        }
     }
 }
