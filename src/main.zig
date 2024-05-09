@@ -28,6 +28,7 @@ pub fn main() !void {
 }
 
 pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace, n:?usize) noreturn {
+    io.getStdOut().writeAll("*****   PANIC   *****") catch {};
     io.getStdOut().writeAll("\x1B[2J") catch {};
     io.getStdOut().writeAll("\x1B[H") catch {};
     std.builtin.default_panic(msg, error_return_trace, n);
