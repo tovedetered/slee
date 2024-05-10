@@ -16,19 +16,20 @@ pub fn editorOpen(filename: []const u8) !void {
     else => return err,
     };
 
-    while(line.getLastOrNull() != null) :
-    (file.reader().streamUntilDelimiter(line.writer(),
-        '\n', null) catch |err| switch (err) {
-    error.EndOfStream => {
-    },
-    else => return err,
-    }){
+    while(true){
         //Trim the \ns and \rs
         while(line.items.len > 0 and (line.getLast() == '\n' or line.getLast() == '\r')){
             _ = line.pop();
         }
         try row.editorAppendRow(line.items);
         line.clearAndFree();
+        file.reader().streamUntilDelimiter(line.writer(),
+            '\n', null) catch |err| switch (err) {
+        error.EndOfStream => {
+            break;
+        },
+        else => return err,
+        };
     }
     line.deinit();
 }

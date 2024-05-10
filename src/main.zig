@@ -19,7 +19,7 @@ pub fn main() !void {
 
     try initEditor(allocator);
     defer data.editor.denit();
-    
+
     const args = try std.process.argsAlloc(allocator);
     defer std.process.argsFree(allocator, args);
 
@@ -53,6 +53,7 @@ fn initEditor(alloc: std.mem.Allocator) !void {
     data.input.cx = 0;
     data.input.cy = 0;
     data.editor.numRows = 0;
+    data.editor.rowoff = 0;
     data.editor.row = &.{};
     try terminal.getWindowSize(&data.editor.screenRows, &data.editor.screenCols);
 }
