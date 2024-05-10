@@ -14,33 +14,41 @@ pub const editorKey = enum(u16) {
     END_KEY,
     PAGE_UP,
     PAGE_DOWN,
-};
+    };
 
 //***** Defs *****
 pub const EditorConfig = struct {
+    ally: std.mem.Allocator,
     orig_terminos: posix.termios,
     screenRows: u16,
     screenCols: u16,
     numRows: u16,
-    row: erow,
+    row: []erow,
+    pub fn denit(self: *EditorConfig) void{
+        for (self.row) |line| {
+            self.ally.free(line.chars);
+        }
+        self.ally.free(self.row);
+    }
 };
 
 pub const InputData = struct {
     cx: u16,
     cy: u16,
-};
+    };
 
 pub const erow = struct {
     chars: []u8,
-};
+    };
 
 //***** Values *****
 pub var editor = EditorConfig{
+    .ally = undefined,
     .orig_terminos = undefined,
     .screenRows = undefined,
     .screenCols = undefined,
     .numRows = undefined,
-    .row = undefined,
+    .row = &.{},
 };
 
 pub var input = InputData{

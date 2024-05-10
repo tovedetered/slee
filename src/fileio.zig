@@ -1,6 +1,7 @@
 const std = @import("std");
 const io = @import("std").io;
 const data = @import("./data.zig");
+const row = @import("./rowOps.zig");
 
 pub fn editorOpen(filename: []const u8) !void {
     const cwd = std.fs.cwd();
@@ -15,9 +16,7 @@ pub fn editorOpen(filename: []const u8) !void {
         while(line.?.len > 0 and (line.?[line.?.len - 1] == '\n' or line.?[line.?.len - 1] == '\r')){
             line.? = line.?[0..line.?.len - 1];
         }
-        data.editor.row.chars = try std.heap.page_allocator.alloc(u8, line.?.len);
-        @memcpy(data.editor.row.chars, line.?);
-        data.editor.numRows = 1;
+        try row.editorAppendRow(line.?);
     }
     std.heap.page_allocator.free(line.?);
 }

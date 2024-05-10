@@ -13,12 +13,13 @@ pub fn main() !void {
     try terminal.enableRawMode();
     defer terminal.disableRawMode();
 
-    try initEditor();
-
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
     defer _ = gpa.deinit();
 
+    try initEditor(allocator);
+    defer data.editor.denit();
+    
     const args = try std.process.argsAlloc(allocator);
     defer std.process.argsFree(allocator, args);
 
@@ -41,14 +42,17 @@ pub fn main() !void {
 
 pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace, n: ?usize) noreturn {
     io.getStdOut().writeAll("\n*****   PANIC   *****\n") catch {};
+    data.editor.denit();
     io.getStdOut().writeAll("\x1B[2J") catch {};
     io.getStdOut().writeAll("\x1B[H") catch {};
     std.builtin.default_panic(msg, error_return_trace, n);
 }
 
-fn initEditor() !void {
+fn initEditor(alloc: std.mem.Allocator) !void {
+    data.editor.ally = alloc;
     data.input.cx = 0;
     data.input.cy = 0;
     data.editor.numRows = 0;
+    data.editor.row = &.{};
     try terminal.getWindowSize(&data.editor.screenRows, &data.editor.screenCols);
 }

@@ -15,7 +15,7 @@ pub fn editorRefreshScreen() !void {
     try editorDrawRows(&buf);
 
     const setCursorPos = try std.fmt.allocPrint(std.heap.page_allocator,
-        "\x1b[{d};{d}H", .{data.input.cx + 1, data.input.cy + 1});
+        "\x1b[{d};{d}H", .{data.input.cy + 1, data.input.cx + 1});
     try buf.append(setCursorPos);
 
     try buf.append("\x1b[?25h");
@@ -41,11 +41,11 @@ pub fn editorDrawRows(ab: *abuf.abuf) !void {
                 try ab.*.append("~");
             }
         }else{
-            const len = data.editor.row.chars.len;
+            const len = data.editor.row[y].chars.len;
             if(len > data.editor.screenCols) {
                 //TODO
             }
-            try ab.*.append(data.editor.row.chars);
+            try ab.*.append(data.editor.row[y].chars);
         }
         try ab.*.append("\x1b[K");
         if(y < data.editor.screenRows - 1){
