@@ -14,23 +14,33 @@ pub fn main() !void {
     defer terminal.disableRawMode();
 
     try initEditor();
-    try cont.editorOpen();
+
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
+    defer _ = gpa.deinit();
+
+    const args = try std.process.argsAlloc(allocator);
+    defer std.process.argsFree(allocator, args);
+
+    if(args.len > 1){
+        try cont.editorOpen(args[1]);
+    }
 
     while (true) {
         try out.editorRefreshScreen();
         const op = try input.editorProcessKeyPress();
         switch (op) {
-            .Quit => {
-                try out.editorRefreshScreen();
-                break;
-            },
-            else => {},
+        .Quit => {
+            try out.editorRefreshScreen();
+            break;
+        },
+        else => {},
         }
     }
 }
 
 pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace, n: ?usize) noreturn {
-    io.getStdOut().writeAll("*****   PANIC   *****") catch {};
+    io.getStdOut().writeAll("\n*****   PANIC   *****\n") catch {};
     io.getStdOut().writeAll("\x1B[2J") catch {};
     io.getStdOut().writeAll("\x1B[H") catch {};
     std.builtin.default_panic(msg, error_return_trace, n);

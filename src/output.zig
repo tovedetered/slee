@@ -25,8 +25,8 @@ pub fn editorRefreshScreen() !void {
 
 pub fn editorDrawRows(ab: *abuf.abuf) !void {
     for(0..data.editor.screenRows) |y| {
-        if(y > data.editor.numRows){
-            if(y == data.editor.screenRows/3){
+        if(y >= data.editor.numRows){
+            if(data.editor.numRows == 0 and y == data.editor.screenRows/3){
                 const welcome:[] u8 = try std.fmt.allocPrint(std.heap.page_allocator,
                     "{s} Editor -- version: {s}",
                     .{data.editorName, data.version});
