@@ -20,6 +20,7 @@ pub const editorKey = enum(u16) {
 pub const EditorConfig = struct {
     ally: std.mem.Allocator,
     rowoff: u16,
+    coloff: u16,
     orig_terminos: posix.termios,
     screenRows: u16,
     screenCols: u16,
@@ -46,6 +47,7 @@ pub const erow = struct {
 pub var editor = EditorConfig{
     .ally = undefined,
     .rowoff = undefined,
+    .coloff = undefined,
     .orig_terminos = undefined,
     .screenRows = undefined,
     .screenCols = undefined,

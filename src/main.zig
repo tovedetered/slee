@@ -54,6 +54,7 @@ fn initEditor(alloc: std.mem.Allocator) !void {
     data.input.cy = 0;
     data.editor.numRows = 0;
     data.editor.rowoff = 0;
+    data.editor.coloff = 0;
     data.editor.row = &.{};
     try terminal.getWindowSize(&data.editor.screenRows, &data.editor.screenCols);
 }
