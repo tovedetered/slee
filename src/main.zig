@@ -23,7 +23,7 @@ pub fn main() !void {
     const args = try std.process.argsAlloc(allocator);
     defer std.process.argsFree(allocator, args);
 
-    if(args.len > 1){
+    if (args.len > 1) {
         try cont.editorOpen(args[1]);
     }
 
@@ -31,11 +31,11 @@ pub fn main() !void {
         try out.editorRefreshScreen();
         const op = try input.editorProcessKeyPress();
         switch (op) {
-        .Quit => {
-            try out.editorRefreshScreen();
-            break;
-        },
-        else => {},
+            .Quit => {
+                try out.editorRefreshScreen();
+                break;
+            },
+            else => {},
         }
     }
 }
