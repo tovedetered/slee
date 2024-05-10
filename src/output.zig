@@ -53,11 +53,12 @@ pub fn editorDrawRows(ab: *abuf.abuf) !void {
                 try ab.*.append("~");
             }
         } else {
-            const len = data.editor.row[filerow].chars.len;
+            const len = data.editor.row[filerow].chars.len - data.editor.coloff;
+            if (len < 0) len = 0;
             if (len > data.editor.screenCols) {
-                try ab.*.append(data.editor.row[filerow].chars[0..data.editor.screenCols]);
+                try ab.*.append(data.editor.row[filerow].chars[data.editor.coloff..data.editor.screenCols]);
             } else {
-                try ab.*.append(data.editor.row[filerow].chars);
+                try ab.*.append(data.editor.row[filerow].chars[data.editor.coloff..]);
             }
         }
         try ab.*.append("\x1b[K");
