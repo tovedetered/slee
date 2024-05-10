@@ -5,8 +5,19 @@ const os = @import("std").os;
 const data = @import("./data.zig");
 const abuf = @import("./data-struct/abuf.zig");
 
+pub fn editorScroll() void {
+    if (data.input.cy < data.editor.rowoff) {
+        data.editor.rowoff = data.input.cy;
+    }
+    if (data.input.cy >= data.editor.rowoff + data.editor.screenRows) {
+        data.editor.rowoff = data.input.cy - data.editor.screenRows + 1;
+    }
+}
+
 pub fn editorRefreshScreen() !void {
-    var buf = abuf.init(std.heap.page_allocator);
+    editorScroll();
+
+    var buf = abuf.init(data.editor.ally);
     defer buf.free();
 
     try buf.append("\x1b[?25l");
