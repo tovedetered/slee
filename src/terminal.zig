@@ -71,6 +71,7 @@ pub fn editorReadKey() !u16 {
                 };
                 switch (seq[1]) {
                 '1' => return @intFromEnum(data.editorKey.HOME_KEY),
+                '3' => return @intFromEnum(data.editorKey.DEL_KEY),
                 '4' => return @intFromEnum(data.editorKey.END_KEY),
                 '5' => return @intFromEnum(data.editorKey.PAGE_UP),
                 '6' => return @intFromEnum(data.editorKey.PAGE_DOWN),
