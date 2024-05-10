@@ -8,15 +8,27 @@ pub fn editorOpen(filename: []const u8) !void {
     var file: std.fs.File = try cwd.openFile(filename, .{ .mode = .read_write });
     defer file.close();
 
-    var line: ?[]u8 = null;
-    line = try file.reader().readUntilDelimiterOrEofAlloc(std.heap.page_allocator,
-        '\n', 1024);
-    if(line != null){
+    const list = std.ArrayList(u8);
+    var line = list.init(data.editor.ally);
+    file.reader().streamUntilDelimiter(line.writer(),
+        '\n', null) catch |err| switch (err) {
+    error.EndOfStream => {},
+    else => return err,
+    };
+
+    while(line.getLastOrNull() != null) :
+    (file.reader().streamUntilDelimiter(line.writer(),
+        '\n', null) catch |err| switch (err) {
+    error.EndOfStream => {
+    },
+    else => return err,
+    }){
         //Trim the \ns and \rs
-        while(line.?.len > 0 and (line.?[line.?.len - 1] == '\n' or line.?[line.?.len - 1] == '\r')){
-            line.? = line.?[0..line.?.len - 1];
+        while(line.items.len > 0 and (line.getLast() == '\n' or line.getLast() == '\r')){
+            _ = line.pop();
         }
-        try row.editorAppendRow(line.?);
+        try row.editorAppendRow(line.items);
+        line.clearAndFree();
     }
-    std.heap.page_allocator.free(line.?);
+    line.deinit();
 }
