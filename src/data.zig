@@ -27,6 +27,8 @@ pub const EditorConfig = struct {
     numRows: usize,
     row: []erow,
     filename: []u8,
+    statusmsg: []u8,
+    statustime: i64,
     pub fn denit(self: *EditorConfig) void {
         for (self.row) |line| {
             self.ally.free(line.chars);
@@ -34,6 +36,7 @@ pub const EditorConfig = struct {
         }
         self.ally.free(self.row);
         self.ally.free(self.filename);
+        self.ally.free(self.statusmsg);
     }
 };
 
@@ -59,6 +62,8 @@ pub var editor = EditorConfig{
     .numRows = undefined,
     .filename = &.{},
     .row = &.{},
+    .statusmsg = &.{},
+    .statustime = undefined,
 };
 
 pub var input = InputData{

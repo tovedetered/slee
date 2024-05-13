@@ -8,6 +8,7 @@ const input = @import("./input.zig");
 const out = @import("./output.zig");
 const data = @import("./data.zig");
 const cont = @import("./fileio.zig");
+const output = @import("./output.zig");
 
 pub fn main() !void {
     try terminal.enableRawMode();
@@ -26,6 +27,8 @@ pub fn main() !void {
     if (args.len > 1) {
         try cont.editorOpen(args[1]);
     }
+
+    try output.editorSetStatusMessage("HELP: Ctrl-Q = quit", .{});
 
     while (true) {
         try out.editorRefreshScreen();
@@ -58,5 +61,6 @@ fn initEditor(alloc: std.mem.Allocator) !void {
     data.editor.coloff = 0;
     data.editor.row = &.{};
     try terminal.getWindowSize(&data.editor.screenRows, &data.editor.screenCols);
-    data.editor.screenRows -= 1;
+    data.editor.screenRows -= 2;
+    data.editor.statustime = 0;
 }

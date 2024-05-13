@@ -2,6 +2,7 @@ const std = @import("std");
 const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
+const time = @import("std").time;
 const data = @import("./data.zig");
 const string = @import("./data-struct/string.zig");
 const rowOp = @import("./rowOps.zig");
@@ -38,6 +39,7 @@ pub fn editorRefreshScreen() !void {
 
     try editorDrawRows(&buf);
     try editorDrawStatusBar(&buf);
+    try editorDrawMessageBar(&buf);
 
     const setCursorPos =
     try std.fmt.allocPrint(std.heap.page_allocator,
@@ -87,17 +89,48 @@ pub fn editorDrawRows(ab: *string.string) !void {
 pub fn editorDrawStatusBar(str: *string.string) !void{
     try str.append("\x1b[7m");
     var status: []u8 = &.{};
+    var rstatus: []u8 = &.{};
+
     status = try std.fmt.allocPrint(data.editor.ally, "{s} - {d} lines", .{
         if(data.editor.filename.len > 0) data.editor.filename else "[NO NAME]",
         data.editor.numRows,
     });
     defer data.editor.ally.free(status);
+
+    rstatus = try std.fmt.allocPrint(data.editor.ally, "{d}:{d}", .{
+        data.input.cy + 1, data.input.rx + 1
+    });
+    defer data.editor.ally.free(rstatus);
+
+    const rlen = rstatus.len;
     var len: usize = status.len;
     if(len > data.editor.screenCols) len = data.editor.screenCols;
     try str.append(status[0..len]);
+
     while(len < data.editor.screenCols){
-        try str.append(" ");
-        len += 1;
+        if(data.editor.screenCols - len == rlen){
+            try str.append(rstatus);
+            break;
+        }else{
+            try str.append(" ");
+            len += 1;
+        }
     }
     try str.append("\x1b[m");
+    try str.append("\r\n");
+
+}
+
+pub fn editorDrawMessageBar(str: *string.string) !void{
+    try str.append("\x1b[K");
+    var len: usize = data.editor.statusmsg.len;
+    if(len > data.editor.screenCols) len = data.editor.screenCols;
+    if(len > 0 and time.milliTimestamp() - data.editor.statustime < 5000){
+        try str.append(data.editor.statusmsg);
+    }
+}
+
+pub fn editorSetStatusMessage(comptime fmt: []const u8, args: anytype) !void{
+    data.editor.statusmsg = try std.fmt.allocPrint(data.editor.ally, fmt, args);
+    data.editor.statustime = time.milliTimestamp();
 }
