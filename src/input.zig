@@ -54,9 +54,7 @@ pub fn editorMoveCursor(key: u16) void {
                 data.input.cx -= 1;
             } else {}
         },
-        @intFromEnum(data.editorKey.ARROW_RIGHT) => if (data.input.cx < data.editor.screenCols) {
-            data.input.cx += 1;
-        },
+        @intFromEnum(data.editorKey.ARROW_RIGHT) => data.input.cx += 1,
         @intFromEnum(data.editorKey.ARROW_UP) => if (data.input.cy > 0) {
             data.input.cy -= 1;
         },

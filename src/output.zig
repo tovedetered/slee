@@ -12,6 +12,12 @@ pub fn editorScroll() void {
     if (data.input.cy >= data.editor.rowoff + data.editor.screenRows) {
         data.editor.rowoff = data.input.cy - data.editor.screenRows + 1;
     }
+    if (data.input.cx < data.editor.coloff) {
+        data.editor.coloff = data.input.cx;
+    }
+    if (data.input.cx >= data.editor.coloff + data.editor.screenCols) {
+        data.editor.coloff = data.input.cx - data.editor.screenCols + 1;
+    }
 }
 
 pub fn editorRefreshScreen() !void {
@@ -26,7 +32,9 @@ pub fn editorRefreshScreen() !void {
     try editorDrawRows(&buf);
 
     const setCursorPos =
-        try std.fmt.allocPrint(std.heap.page_allocator, "\x1b[{d};{d}H", .{ (data.input.cy - data.editor.rowoff) + 1, data.input.cx + 1 });
+    try std.fmt.allocPrint(std.heap.page_allocator,
+        "\x1b[{d};{d}H", .{ (data.input.cy - data.editor.rowoff) + 1,
+            (data.input.cx - data.editor.coloff) + 1 });
     try buf.append(setCursorPos);
 
     try buf.append("\x1b[?25h");
@@ -39,7 +47,8 @@ pub fn editorDrawRows(ab: *abuf.abuf) !void {
         const filerow = y + data.editor.rowoff;
         if (filerow >= data.editor.numRows) {
             if (data.editor.numRows == 0 and y == data.editor.screenRows / 3) {
-                const welcome: []u8 = try std.fmt.allocPrint(std.heap.page_allocator, "{s} Editor -- version: {s}", .{ data.editorName, data.version });
+                const welcome: []u8 = try std.fmt.allocPrint(std.heap.page_allocator,
+                    "{s} Editor -- version: {s}", .{ data.editorName, data.version });
                 var padding: usize = (data.editor.screenCols - welcome.len) / 2;
                 if (padding != 0) {
                     try ab.append("~");
@@ -53,12 +62,13 @@ pub fn editorDrawRows(ab: *abuf.abuf) !void {
                 try ab.*.append("~");
             }
         } else {
-            const len = data.editor.row[filerow].chars.len - data.editor.coloff;
+            var len:i17 = @as(i17, @intCast(data.editor.row[filerow].chars.len)) -
+            @as(i17, @intCast(data.editor.coloff));
             if (len < 0) len = 0;
-            if (len > data.editor.screenCols) {
-                try ab.*.append(data.editor.row[filerow].chars[data.editor.coloff..data.editor.screenCols]);
-            } else {
-                try ab.*.append(data.editor.row[filerow].chars[data.editor.coloff..]);
+            if(len > data.editor.screenCols) len = data.editor.screenCols;
+            if(len != 0){
+                try ab.append(data.editor.row[filerow].
+                chars[data.editor.coloff..data.editor.coloff + @as(u16,@intCast(len))]);
             }
         }
         try ab.*.append("\x1b[K");
