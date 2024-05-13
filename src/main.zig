@@ -31,11 +31,11 @@ pub fn main() !void {
         try out.editorRefreshScreen();
         const op = try input.editorProcessKeyPress();
         switch (op) {
-            .Quit => {
-                try out.editorRefreshScreen();
-                break;
-            },
-            else => {},
+        .Quit => {
+            try out.editorRefreshScreen();
+            break;
+        },
+        else => {},
         }
     }
 }
@@ -52,6 +52,7 @@ fn initEditor(alloc: std.mem.Allocator) !void {
     data.editor.ally = alloc;
     data.input.cx = 0;
     data.input.cy = 0;
+    data.input.rx = 0;
     data.editor.numRows = 0;
     data.editor.rowoff = 0;
     data.editor.coloff = 0;

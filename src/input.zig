@@ -65,7 +65,7 @@ pub fn editorMoveCursor(key: u16) void {
         if(row != null){
             if(data.input.cx < row.?.*.chars.len){
                 data.input.cx += 1;
-            } else if(data.input.cx >= data.editor.row.len){
+            } else if(data.input.cx > data.editor.row.len - 1){
                 data.input.cy += 1;
                 data.input.cx = 0;
             }

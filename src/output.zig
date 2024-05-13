@@ -4,19 +4,26 @@ const posix = @import("std").posix;
 const os = @import("std").os;
 const data = @import("./data.zig");
 const string = @import("./data-struct/string.zig");
+const rowOp = @import("./rowOps.zig");
 
 pub fn editorScroll() void {
+    data.input.rx = 0;
+    if(data.input.cy < data.editor.numRows){
+        data.input.rx = rowOp.editorRowCxToRx(
+                &data.editor.row[data.input.cy],data.input.cx);
+    }
+
     if (data.input.cy < data.editor.rowoff) {
         data.editor.rowoff = data.input.cy;
     }
     if (data.input.cy >= data.editor.rowoff + data.editor.screenRows) {
         data.editor.rowoff = data.input.cy - data.editor.screenRows + 1;
     }
-    if (data.input.cx < data.editor.coloff) {
-        data.editor.coloff = data.input.cx;
+    if (data.input.rx < data.editor.coloff) {
+        data.editor.coloff = data.input.rx;
     }
-    if (data.input.cx >= data.editor.coloff + data.editor.screenCols) {
-        data.editor.coloff = data.input.cx - data.editor.screenCols + 1;
+    if (data.input.rx >= data.editor.coloff + data.editor.screenCols) {
+        data.editor.coloff = data.input.rx - data.editor.screenCols + 1;
     }
 }
 
@@ -34,7 +41,7 @@ pub fn editorRefreshScreen() !void {
     const setCursorPos =
     try std.fmt.allocPrint(std.heap.page_allocator,
         "\x1b[{d};{d}H", .{ (data.input.cy - data.editor.rowoff) + 1,
-            (data.input.cx - data.editor.coloff) + 1 });
+            (data.input.rx - data.editor.coloff) + 1 });
     try buf.append(setCursorPos);
 
     try buf.append("\x1b[?25h");

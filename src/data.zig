@@ -38,6 +38,7 @@ pub const EditorConfig = struct {
 pub const InputData = struct {
     cx: u16,
     cy: u16,
+    rx: u16,
     };
 
 pub const erow = struct {
@@ -60,6 +61,7 @@ pub var editor = EditorConfig{
 pub var input = InputData{
     .cx = undefined,
     .cy = undefined,
+    .rx = undefined,
 };
 
 pub const version = "0.0.1";

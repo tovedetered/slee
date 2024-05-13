@@ -2,6 +2,17 @@ const std = @import("std");
 const io = @import("std").io;
 const data = @import("./data.zig");
 
+pub fn editorRowCxToRx(row: *data.erow, cx: u16) u16{
+    var rx:u16 = 0;
+    for(0..cx) |j| {
+        if(row.chars[j] == '\t'){
+            rx += (data.TABSTOP - 1) - (rx % data.TABSTOP);
+        }
+        rx += 1;
+    }
+    return rx;
+}
+
 pub fn editorAppendRow(row:[]u8) !void{
     data.editor.row = try data.editor.ally.realloc(data.editor.row,
         data.editor.numRows + 1);
