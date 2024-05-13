@@ -79,8 +79,6 @@ pub fn editorDrawRows(ab: *string.string) !void {
             }
         }
         try ab.*.append("\x1b[K");
-        if (y < data.editor.screenRows - 1) {
-            try ab.*.append("\r\n");
-        }
+        try ab.*.append("\r\n");
     }
 }
