@@ -104,7 +104,7 @@ pub fn editorReadKey() !u16 {
     return buf[0];
 }
 
-pub fn getWindowSize(rows: *u16, cols: *u16) !void{
+pub fn getWindowSize(rows: *usize, cols: *usize) !void{
     var ws = posix.winsize{
         .ws_col = undefined,
         .ws_row = undefined,
@@ -132,7 +132,7 @@ pub fn getWindowSize(rows: *u16, cols: *u16) !void{
     }
 }
 
-fn getCursorPosition(rows: *u16, cols: *u16) !void {
+fn getCursorPosition(rows: *usize, cols: *usize) !void {
     var buf:[32] u8 = undefined;
     var i: usize = 0;
 

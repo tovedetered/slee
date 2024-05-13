@@ -26,6 +26,14 @@ pub fn editorProcessKeyPress() !KeyAction {
     },
     @intFromEnum(data.editorKey.PAGE_UP), @intFromEnum(data.editorKey.PAGE_DOWN) => {
         var times = data.editor.screenRows;
+        if (c == @intFromEnum(data.editorKey.PAGE_UP)) {
+            data.input.cy = data.editor.rowoff;
+        }else{
+            data.input.cy = data.editor.rowoff + data.editor.screenRows - 1;
+            if(data.input.cy > data.editor.numRows) data.input.cy = data.editor.numRows;
+        }
+
+
         while (times > 0) : (times -= 1) {
             if (c == @intFromEnum(data.editorKey.PAGE_UP)) {
                 editorMoveCursor(@intFromEnum(data.editorKey.ARROW_UP));

@@ -2,8 +2,8 @@ const std = @import("std");
 const io = @import("std").io;
 const data = @import("./data.zig");
 
-pub fn editorRowCxToRx(row: *data.erow, cx: u16) u16{
-    var rx:u16 = 0;
+pub fn editorRowCxToRx(row: *data.erow, cx: usize) usize{
+    var rx:usize = 0;
     for(0..cx) |j| {
         if(row.chars[j] == '\t'){
             rx += (data.TABSTOP - 1) - (rx % data.TABSTOP);

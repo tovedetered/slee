@@ -19,11 +19,11 @@ pub const editorKey = enum(u16) {
 //***** Defs *****
 pub const EditorConfig = struct {
     ally: std.mem.Allocator,
-    rowoff: u16,
-    coloff: u16,
+    rowoff: usize,
+    coloff: usize,
     orig_terminos: posix.termios,
-    screenRows: u16,
-    screenCols: u16,
+    screenRows: usize,
+    screenCols: usize,
     numRows: usize,
     row: []erow,
     pub fn denit(self: *EditorConfig) void {
@@ -36,9 +36,9 @@ pub const EditorConfig = struct {
 };
 
 pub const InputData = struct {
-    cx: u16,
-    cy: u16,
-    rx: u16,
+    cx: usize,
+    cy: usize,
+    rx: usize,
     };
 
 pub const erow = struct {

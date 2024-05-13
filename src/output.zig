@@ -69,8 +69,8 @@ pub fn editorDrawRows(ab: *string.string) !void {
                 try ab.*.append("~");
             }
         } else {
-            var len:i17 = @as(i17, @intCast(data.editor.row[filerow].render.len)) -
-            @as(i17, @intCast(data.editor.coloff));
+            var len:i65 = @as(i65, @intCast(data.editor.row[filerow].render.len)) -
+            @as(i65, @intCast(data.editor.coloff));
             if (len < 0) len = 0;
             if(len > data.editor.screenCols) len = data.editor.screenCols;
             if(len != 0){
