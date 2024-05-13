@@ -48,7 +48,9 @@ pub fn editorProcessKeyPress() !KeyAction {
         return .NoOp;
     },
     @intFromEnum(data.editorKey.END_KEY) => {
-        data.input.cx = data.editor.screenCols - 1;
+        if(data.input.cy < data.editor.numRows){
+            data.input.cx = data.editor.row[data.input.cy].render.len;
+        }
         return .NoOp;
     },
     else => .NoOp,
