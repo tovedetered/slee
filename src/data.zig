@@ -24,7 +24,7 @@ pub const EditorConfig = struct {
     orig_terminos: posix.termios,
     screenRows: u16,
     screenCols: u16,
-    numRows: u16,
+    numRows: usize,
     row: []erow,
     pub fn denit(self: *EditorConfig) void {
         for (self.row) |line| {
@@ -64,3 +64,5 @@ pub var input = InputData{
 
 pub const version = "0.0.1";
 pub const editorName = "Zigitor";
+
+pub const TABSTOP = 4;

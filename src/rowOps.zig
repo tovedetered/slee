@@ -16,13 +16,28 @@ pub fn editorAppendRow(row:[]u8) !void{
 }
 
 pub fn editorUpdateRow(row: *data.erow) !void{
+    var tabs:u8 = 0;
+
+    for(0..row.chars.len) |j| {
+        if(row.chars[j] == '\t') tabs += 1;
+    }
+
     const alloc = data.editor.ally;
     alloc.free(row.render);
-    row.render = try alloc.alloc(u8, row.chars.len);
+    row.render = try alloc.alloc(u8, row.chars.len + tabs*(data.TABSTOP - 1));
 
     var idx:usize = 0;
     for(0..row.chars.len) |j| {
-        row.render[idx] = row.chars[j];
-        idx += 1;
+        if(row.chars[j] == '\t'){
+            row.render[idx] = ' ';
+            idx += 1;
+            while(idx % data.TABSTOP != 0){
+                row.render[idx] = ' ';
+                idx += 1;
+            }
+        }else{
+            row.render[idx] = row.chars[j];
+            idx += 1;
+        }
     }
 }
