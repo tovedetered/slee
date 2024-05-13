@@ -14,7 +14,7 @@ pub const editorKey = enum(u16) {
     END_KEY,
     PAGE_UP,
     PAGE_DOWN,
-};
+    };
 
 //***** Defs *****
 pub const EditorConfig = struct {
@@ -29,6 +29,7 @@ pub const EditorConfig = struct {
     pub fn denit(self: *EditorConfig) void {
         for (self.row) |line| {
             self.ally.free(line.chars);
+            self.ally.free(line.render);
         }
         self.ally.free(self.row);
     }
@@ -37,11 +38,12 @@ pub const EditorConfig = struct {
 pub const InputData = struct {
     cx: u16,
     cy: u16,
-};
+    };
 
 pub const erow = struct {
     chars: []u8,
-};
+    render: []u8,
+    };
 
 //***** Values *****
 pub var editor = EditorConfig{

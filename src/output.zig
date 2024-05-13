@@ -3,7 +3,7 @@ const io = @import("std").io;
 const posix = @import("std").posix;
 const os = @import("std").os;
 const data = @import("./data.zig");
-const abuf = @import("./data-struct/abuf.zig");
+const string = @import("./data-struct/string.zig");
 
 pub fn editorScroll() void {
     if (data.input.cy < data.editor.rowoff) {
@@ -23,7 +23,7 @@ pub fn editorScroll() void {
 pub fn editorRefreshScreen() !void {
     editorScroll();
 
-    var buf = abuf.init(data.editor.ally);
+    var buf = string.init(data.editor.ally);
     defer buf.free();
 
     try buf.append("\x1b[?25l");
@@ -42,7 +42,7 @@ pub fn editorRefreshScreen() !void {
     try io.getStdOut().writeAll(buf.b);
 }
 
-pub fn editorDrawRows(ab: *abuf.abuf) !void {
+pub fn editorDrawRows(ab: *string.string) !void {
     for (0..data.editor.screenRows) |y| {
         const filerow = y + data.editor.rowoff;
         if (filerow >= data.editor.numRows) {
@@ -62,13 +62,13 @@ pub fn editorDrawRows(ab: *abuf.abuf) !void {
                 try ab.*.append("~");
             }
         } else {
-            var len:i17 = @as(i17, @intCast(data.editor.row[filerow].chars.len)) -
+            var len:i17 = @as(i17, @intCast(data.editor.row[filerow].render.len)) -
             @as(i17, @intCast(data.editor.coloff));
             if (len < 0) len = 0;
             if(len > data.editor.screenCols) len = data.editor.screenCols;
             if(len != 0){
                 try ab.append(data.editor.row[filerow].
-                chars[data.editor.coloff..data.editor.coloff + @as(u16,@intCast(len))]);
+                render[data.editor.coloff..data.editor.coloff + @as(u16,@intCast(len))]);
             }
         }
         try ab.*.append("\x1b[K");
