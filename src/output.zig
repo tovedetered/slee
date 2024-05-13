@@ -37,6 +37,7 @@ pub fn editorRefreshScreen() !void {
     try buf.append("\x1b[H");
 
     try editorDrawRows(&buf);
+    try editorDrawStatusBar(&buf);
 
     const setCursorPos =
     try std.fmt.allocPrint(std.heap.page_allocator,
@@ -81,4 +82,22 @@ pub fn editorDrawRows(ab: *string.string) !void {
         try ab.*.append("\x1b[K");
         try ab.*.append("\r\n");
     }
+}
+
+pub fn editorDrawStatusBar(str: *string.string) !void{
+    try str.append("\x1b[7m");
+    var status: []u8 = &.{};
+    status = try std.fmt.allocPrint(data.editor.ally, "{s} - {d} lines", .{
+        if(data.editor.filename.len > 0) data.editor.filename else "[NO NAME]",
+        data.editor.numRows,
+    });
+    defer data.editor.ally.free(status);
+    var len: usize = status.len;
+    if(len > data.editor.screenCols) len = data.editor.screenCols;
+    try str.append(status[0..len]);
+    while(len < data.editor.screenCols){
+        try str.append(" ");
+        len += 1;
+    }
+    try str.append("\x1b[m");
 }

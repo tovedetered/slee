@@ -26,12 +26,14 @@ pub const EditorConfig = struct {
     screenCols: usize,
     numRows: usize,
     row: []erow,
+    filename: []u8,
     pub fn denit(self: *EditorConfig) void {
         for (self.row) |line| {
             self.ally.free(line.chars);
             self.ally.free(line.render);
         }
         self.ally.free(self.row);
+        self.ally.free(self.filename);
     }
 };
 
@@ -55,6 +57,7 @@ pub var editor = EditorConfig{
     .screenRows = undefined,
     .screenCols = undefined,
     .numRows = undefined,
+    .filename = &.{},
     .row = &.{},
 };
 

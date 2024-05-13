@@ -4,6 +4,10 @@ const data = @import("./data.zig");
 const row = @import("./rowOps.zig");
 
 pub fn editorOpen(filename: []const u8) !void {
+    data.editor.ally.free(data.editor.filename);
+    data.editor.filename = try data.editor.ally.alloc(u8, filename.len);
+    @memcpy(data.editor.filename, filename);
+
     const cwd = std.fs.cwd();
     var file: std.fs.File = try cwd.openFile(filename, .{ .mode = .read_write });
     defer file.close();
@@ -15,9 +19,6 @@ pub fn editorOpen(filename: []const u8) !void {
     error.EndOfStream => {},
     else => return err,
     };
-
-
-
 
     while(true){
         //Trim the \ns and \rs
