@@ -52,3 +52,12 @@ pub fn editorUpdateRow(row: *data.erow) !void{
         }
     }
 }
+
+pub fn editorRowInsertChar(row: *data.erow, at_: usize, key: u16) !void {
+    var alloc = data.editor.ally;
+    var at:usize = at_;
+    if(at < 0 or at > row.chars.len) at = row.chars.len;
+    row.chars = try alloc.realloc(row.chars, row.chars.len + 1);
+    row.chars[at] = @as(u8, @intCast(key));
+    try editorUpdateRow(row);
+}

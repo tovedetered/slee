@@ -5,6 +5,8 @@ const os = @import("std").os;
 
 //***** Enums *****
 pub const editorKey = enum(u16) {
+    BACKSPACE = 127,
+
     ARROW_LEFT = 1000,
     ARROW_RIGHT,
     ARROW_UP,

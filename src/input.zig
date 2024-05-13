@@ -5,6 +5,7 @@ const os = @import("std").os;
 const term = @import("./terminal.zig");
 const util = @import("./utilities.zig");
 const data = @import("./data.zig");
+const ediops = @import("./editorOps.zig");
 
 const KeyAction = enum {
     Quit,
@@ -15,6 +16,18 @@ const KeyAction = enum {
 pub fn editorProcessKeyPress() !KeyAction {
     const c = try term.editorReadKey();
     return switch (c) {
+    '\r' => {
+        //TODO: ENTER Key
+        return .NoOp;
+    },
+
+    @intFromEnum(data.editorKey.BACKSPACE),
+    util.ctrlKey('h'),
+    @intFromEnum(data.editorKey.DEL_KEY) => {
+        //TODO: DELETE Stuff
+        return .NoOp;
+    },
+
     util.ctrlKey('q') => .Quit,
     @intFromEnum(data.editorKey.ARROW_LEFT),
     @intFromEnum(data.editorKey.ARROW_RIGHT),
@@ -24,7 +37,9 @@ pub fn editorProcessKeyPress() !KeyAction {
         editorMoveCursor(c);
         return .NoOp;
     },
-    @intFromEnum(data.editorKey.PAGE_UP), @intFromEnum(data.editorKey.PAGE_DOWN) => {
+
+    @intFromEnum(data.editorKey.PAGE_UP),
+    @intFromEnum(data.editorKey.PAGE_DOWN) => {
         var times = data.editor.screenRows;
         if (c == @intFromEnum(data.editorKey.PAGE_UP)) {
             data.input.cy = data.editor.rowoff;
@@ -43,17 +58,29 @@ pub fn editorProcessKeyPress() !KeyAction {
         }
         return .NoOp;
     },
+
     @intFromEnum(data.editorKey.HOME_KEY) => {
         data.input.cx = 0;
         return .NoOp;
     },
+
     @intFromEnum(data.editorKey.END_KEY) => {
         if(data.input.cy < data.editor.numRows){
             data.input.cx = data.editor.row[data.input.cy].render.len;
         }
         return .NoOp;
     },
-    else => .NoOp,
+
+    util.ctrlKey('l'),
+    '\x1b' => {
+        //TODO
+        return .NoOp;
+    },
+
+    else => {
+        try ediops.editorInsertChar(c);
+        return .NoOp;
+    },
     };
 }
 
