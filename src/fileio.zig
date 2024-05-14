@@ -63,13 +63,14 @@ pub fn editorSave() !void{
     const cwd = std.fs.cwd();
 
     var tmpFile: std.fs.File = try cwd.createFile("temp9089", .{});
-
+    errdefer tmpFile.close();
+    
     const buf = try editorRowsToString();
     defer data.editor.ally.free(buf);
 
     try tmpFile.writeAll(buf);
     tmpFile.close();
-    
+
     try cwd.deleteFile(data.editor.filename);
 
     try cwd.rename("temp9089", data.editor.filename);
