@@ -62,19 +62,15 @@ pub fn editorOpen(filename: []const u8) !void {
 pub fn editorSave() !void{
     const cwd = std.fs.cwd();
 
-    var tmpFile: std.fs.File = cwd.createFile("temp9089", .{});
+    var tmpFile: std.fs.File = try cwd.createFile("temp9089", .{});
 
     const buf = try editorRowsToString();
     defer data.editor.ally.free(buf);
 
     try tmpFile.writeAll(buf);
-
-    var file: std.fs.File = try cwd.createFile(data.editor.filename,
-        .{.truncate = true});
-    defer file.close();
-
-    try file.writeFileAll(tmpFile, .{});
     tmpFile.close();
+    
+    try cwd.deleteFile(data.editor.filename);
 
-    try cwd.deleteFile("temp9089");
+    try cwd.rename("temp9089", data.editor.filename);
 }
