@@ -131,6 +131,8 @@ pub fn editorDrawMessageBar(str: *string.string) !void{
 }
 
 pub fn editorSetStatusMessage(comptime fmt: []const u8, args: anytype) !void{
-    data.editor.statusmsg = try std.fmt.allocPrint(data.editor.ally, fmt, args);
+    data.editor.ally.free(data.editor.statusmsg);
+    data.editor.statusmsg = try std.fmt.allocPrint(data.editor.ally,
+        fmt, args);
     data.editor.statustime = time.milliTimestamp();
 }

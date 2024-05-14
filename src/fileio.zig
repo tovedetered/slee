@@ -2,6 +2,7 @@ const std = @import("std");
 const io = @import("std").io;
 const data = @import("./data.zig");
 const row = @import("./rowOps.zig");
+const output = @import("./output.zig");
 
 pub fn editorRowsToString() ![]u8{
     var totlen: usize = 0;
@@ -64,7 +65,7 @@ pub fn editorSave() !void{
 
     var tmpFile: std.fs.File = try cwd.createFile("temp9089", .{});
     errdefer tmpFile.close();
-    
+
     const buf = try editorRowsToString();
     defer data.editor.ally.free(buf);
 
@@ -74,4 +75,6 @@ pub fn editorSave() !void{
     try cwd.deleteFile(data.editor.filename);
 
     try cwd.rename("temp9089", data.editor.filename);
+
+    try output.editorSetStatusMessage("{d} bytes written to disk", .{buf.len});
 }

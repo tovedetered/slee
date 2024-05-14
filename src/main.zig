@@ -28,7 +28,7 @@ pub fn main() !void {
         try cont.editorOpen(args[1]);
     }
 
-    try output.editorSetStatusMessage("HELP: Ctrl-Q = quit", .{});
+    try output.editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit", .{});
 
     while (true) {
         try out.editorRefreshScreen();
