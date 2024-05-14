@@ -6,6 +6,7 @@ const term = @import("./terminal.zig");
 const util = @import("./utilities.zig");
 const data = @import("./data.zig");
 const ediops = @import("./editorOps.zig");
+const fileops = @import("./fileio.zig");
 
 const KeyAction = enum {
     Quit,
@@ -25,6 +26,11 @@ pub fn editorProcessKeyPress() !KeyAction {
     util.ctrlKey('h'),
     @intFromEnum(data.editorKey.DEL_KEY) => {
         //TODO: DELETE Stuff
+        return .NoOp;
+    },
+
+    util.ctrlKey('s') => {
+        try fileops.editorSave();
         return .NoOp;
     },
 
