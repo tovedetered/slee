@@ -80,3 +80,4 @@ pub const version = "0.0.1";
 pub const editorName = "Zigitor";
 
 pub const TABSTOP = 4;
+pub const QUIT_TIMES = 3;

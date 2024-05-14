@@ -7,6 +7,7 @@ const util = @import("./utilities.zig");
 const data = @import("./data.zig");
 const ediops = @import("./editorOps.zig");
 const fileops = @import("./fileio.zig");
+const output = @import("./output.zig");
 
 const KeyAction = enum {
     Quit,
@@ -15,33 +16,44 @@ const KeyAction = enum {
     };
 
 pub fn editorProcessKeyPress() !KeyAction {
+    const state = struct{
+        var quit_times:usize = data.QUIT_TIMES;
+        };
+
+
     const c = try term.editorReadKey();
-    return switch (c) {
+    switch (c) {
     '\r' => {
         //TODO: ENTER Key
-        return .NoOp;
     },
 
     @intFromEnum(data.editorKey.BACKSPACE),
     util.ctrlKey('h'),
     @intFromEnum(data.editorKey.DEL_KEY) => {
         //TODO: DELETE Stuff
-        return .NoOp;
     },
 
     util.ctrlKey('s') => {
         try fileops.editorSave();
-        return .NoOp;
     },
 
-    util.ctrlKey('q') => .Quit,
+    util.ctrlKey('q') => {
+        if(data.editor.dirty > 0 and state.quit_times > 0){
+            try output.editorSetStatusMessage(
+                    "WARNING: File has unsaved changes. Press Ctrl-Q {d} more times to quit.",
+                    .{state.quit_times});
+            state.quit_times -= 1;
+            return .NoOp;
+        }else{
+            return .Quit;
+        }
+    },
     @intFromEnum(data.editorKey.ARROW_LEFT),
     @intFromEnum(data.editorKey.ARROW_RIGHT),
     @intFromEnum(data.editorKey.ARROW_UP),
     @intFromEnum(data.editorKey.ARROW_DOWN),
     => {
         editorMoveCursor(c);
-        return .NoOp;
     },
 
     @intFromEnum(data.editorKey.PAGE_UP),
@@ -62,32 +74,29 @@ pub fn editorProcessKeyPress() !KeyAction {
                 editorMoveCursor(@intFromEnum(data.editorKey.ARROW_DOWN));
             }
         }
-        return .NoOp;
     },
 
     @intFromEnum(data.editorKey.HOME_KEY) => {
         data.input.cx = 0;
-        return .NoOp;
     },
 
     @intFromEnum(data.editorKey.END_KEY) => {
         if(data.input.cy < data.editor.numRows){
             data.input.cx = data.editor.row[data.input.cy].render.len;
         }
-        return .NoOp;
     },
 
     util.ctrlKey('l'),
     '\x1b' => {
         //TODO
-        return .NoOp;
     },
 
     else => {
         try ediops.editorInsertChar(c);
-        return .NoOp;
-    },
-    };
+    }
+    }
+    state.quit_times = data.QUIT_TIMES;
+    return .NoOp;
 }
 
 pub fn editorMoveCursor(key: u16) void {

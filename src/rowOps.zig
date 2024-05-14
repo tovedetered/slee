@@ -63,3 +63,9 @@ pub fn editorRowInsertChar(row: *data.erow, at_: usize, key: u16) !void {
     try editorUpdateRow(row);
     data.editor.dirty += 1;
 }
+
+pub fn editorRowDelChar(row: *data.erow, at:usize) !void{
+    if(at < 0 or at >= row.chars.len) return;
+    
+
+}
