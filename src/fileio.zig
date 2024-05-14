@@ -58,6 +58,7 @@ pub fn editorOpen(filename: []const u8) !void {
         };
     }
     line.deinit();
+    data.editor.dirty = 0;
 }
 
 pub fn editorSave() !void{
@@ -77,4 +78,5 @@ pub fn editorSave() !void{
     try cwd.rename("temp9089", data.editor.filename);
 
     try output.editorSetStatusMessage("{d} bytes written to disk", .{buf.len});
+    data.editor.dirty = 0;
 }

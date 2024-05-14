@@ -91,9 +91,9 @@ pub fn editorDrawStatusBar(str: *string.string) !void{
     var status: []u8 = &.{};
     var rstatus: []u8 = &.{};
 
-    status = try std.fmt.allocPrint(data.editor.ally, "{s} - {d} lines", .{
+    status = try std.fmt.allocPrint(data.editor.ally, "{s} - {d} lines {s}", .{
         if(data.editor.filename.len > 0) data.editor.filename else "[NO NAME]",
-        data.editor.numRows,
+        data.editor.numRows, if(data.editor.dirty > 0) "(modified)" else "",
     });
     defer data.editor.ally.free(status);
 

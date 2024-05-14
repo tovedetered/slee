@@ -24,6 +24,7 @@ pub fn editorAppendRow(row:[]u8) !void{
     data.editor.row[at].render = &.{};
     try editorUpdateRow(&data.editor.row[at]);
     data.editor.numRows += 1;
+    data.editor.dirty += 1;
 }
 
 pub fn editorUpdateRow(row: *data.erow) !void{
@@ -60,4 +61,5 @@ pub fn editorRowInsertChar(row: *data.erow, at_: usize, key: u16) !void {
     row.chars = try alloc.realloc(row.chars, row.chars.len + 1);
     row.chars[at] = @as(u8, @intCast(key));
     try editorUpdateRow(row);
+    data.editor.dirty += 1;
 }
