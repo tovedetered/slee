@@ -67,7 +67,7 @@ pub fn editorRowInsertChar(row: *data.erow, at_: usize, key: u16) !void {
 pub fn editorRowDelChar(row: *data.erow, at:usize) !void{
     if(at < 0 or at >= row.chars.len) return;
     std.mem.copyBackwards(u8, row.chars[at..], row.chars[at + 1..]);
-    data.editor.ally.realloc(row.chars, row.chars.len - 1);
-    editorUpdateRow(row);
+    row.chars = try data.editor.ally.realloc(row.chars, row.chars.len - 1);
+    try editorUpdateRow(row);
     data.editor.dirty += 1;
 }

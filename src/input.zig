@@ -30,7 +30,9 @@ pub fn editorProcessKeyPress() !KeyAction {
     @intFromEnum(data.editorKey.BACKSPACE),
     util.ctrlKey('h'),
     @intFromEnum(data.editorKey.DEL_KEY) => {
-        //TODO: DELETE Stuff
+        if(c == @intFromEnum(data.editorKey.DEL_KEY))
+        editorMoveCursor(@intFromEnum(data.editorKey.ARROW_RIGHT));
+        try ediops.editorDelChar();
     },
 
     util.ctrlKey('s') => {
