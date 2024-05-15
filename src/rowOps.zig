@@ -75,3 +75,14 @@ pub fn editorRowDelChar(row: *data.erow, at:usize) !void{
     try editorUpdateRow(row);
     data.editor.dirty += 1;
 }
+
+fn editorFreeRow(row: *data.erow) void{
+    data.editor.ally.free(row.chars);
+    data.editor.ally.free(row.render);
+}
+
+pub fn editorDelRow(at: usize) !void{
+    if(at < 0 or at >= data.editor.numRows) return;
+    editorFreeRow(&data.editor.row[at]);
+
+}
