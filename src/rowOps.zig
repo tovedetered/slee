@@ -59,6 +59,9 @@ pub fn editorRowInsertChar(row: *data.erow, at_: usize, key: u16) !void {
     var at:usize = at_;
     if(at < 0 or at > row.chars.len) at = row.chars.len;
     row.chars = try alloc.realloc(row.chars, row.chars.len + 1);
+    //Backwards as I am copying things from behind
+    std.mem.copyBackwards(u8, row.chars[(at+1)..row.chars.len],
+        row.chars[at..row.chars.len - 1]);
     row.chars[at] = @as(u8, @intCast(key));
     try editorUpdateRow(row);
     data.editor.dirty += 1;
@@ -66,6 +69,7 @@ pub fn editorRowInsertChar(row: *data.erow, at_: usize, key: u16) !void {
 
 pub fn editorRowDelChar(row: *data.erow, at:usize) !void{
     if(at < 0 or at >= row.chars.len) return;
+    //Forwards because it is the opposite as above
     std.mem.copyForwards(u8, row.chars[at..], row.chars[(at + 1)..row.chars.len]);
     row.chars = try data.editor.ally.realloc(row.chars, row.chars.len - 1);
     try editorUpdateRow(row);
