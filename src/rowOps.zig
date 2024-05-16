@@ -84,5 +84,5 @@ fn editorFreeRow(row: *data.erow) void{
 pub fn editorDelRow(at: usize) !void{
     if(at < 0 or at >= data.editor.numRows) return;
     editorFreeRow(&data.editor.row[at]);
-
+    
 }
