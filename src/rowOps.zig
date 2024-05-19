@@ -82,7 +82,7 @@ fn editorFreeRow(row: *data.erow) void{
 }
 
 pub fn editorDelRow(at: usize) !void{
-    const row = data.editor.row;
+    var row = data.editor.row;
     if(at < 0 or at >= data.editor.numRows) return;
     editorFreeRow(&data.editor.row[at]);
     std.mem.copyForwards(data.erow, row[at..], row[(at + 1)..]);
@@ -93,7 +93,7 @@ pub fn editorDelRow(at: usize) !void{
 pub fn editorRowAppendString(row: *data.erow, s: []const u8) !void{
     const ally = data.editor.ally;
     const size = row.chars.len;
-    row.chars = ally.realloc(row.chars, row.chars.len + s.len);
+    row.chars = try ally.realloc(row.chars, row.chars.len + s.len);
     std.mem.copyBackwards(u8, row.chars[size..],
         s);
     try editorUpdateRow(row);
