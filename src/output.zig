@@ -87,6 +87,7 @@ pub fn editorDrawRows(ab: *string.string) !void {
 }
 
 pub fn editorDrawStatusBar(str: *string.string) !void{
+
     try str.append("\x1b[7m");
     var status: []u8 = &.{};
     var rstatus: []u8 = &.{};
