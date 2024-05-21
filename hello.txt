@@ -1,14 +1,1 @@
-Now I just need to make deleting new lines work
-
-
-
-text editor 1000
-
-
-amazing
-
-
-
-
-
-
+Deleting Works, finally

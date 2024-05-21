@@ -33,10 +33,16 @@ pub const EditorConfig = struct {
     statustime: i64,
     dirty: usize,
     pub fn denit(self: *EditorConfig) void {
+        var count:usize = 0;
+        std.log.debug("Starting Denit with {d} rows, numrows: {d}", .{self.row.len, self.numRows});
         for (self.row) |line| {
+            count += 1;
             self.ally.free(line.chars);
             self.ally.free(line.render);
+            std.log.debug("Deinit succeeded for {d} rows", .{count});
+            //What is happening is that the row count is not resetting
         }
+        std.log.debug("Sucessfully deinialized the rows", .{});
         self.ally.free(self.row);
         self.ally.free(self.filename);
         self.ally.free(self.statusmsg);
