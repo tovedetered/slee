@@ -36,6 +36,7 @@ pub fn editorInsertNewLine() !void {
         var row: *data.erow = &data.editor.row[data.input.cy];
         try rowop.editorInsertRow(data.input.cy + 1, row.chars[data.input.cx..]);
         row = &data.editor.row[data.input.cy];
+        row.chars.len = data.input.cx;
         try rowop.editorUpdateRow(row);
     }
     data.input.cy += 1;
