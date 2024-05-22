@@ -45,12 +45,12 @@ pub fn editorOpen(filename: []const u8) !void {
         while(line.items.len > 0 and (line.getLast() == '\n' or line.getLast() == '\r')){
             _ = line.pop();
         }
-        try row.editorAppendRow(line.items);
+        try row.editorInsertRow(data.editor.numRows, line.items);
         line.clearAndFree();
         file.reader().streamUntilDelimiter(line.writer(),
             '\n', null) catch |err| switch (err) {
         error.EndOfStream => {
-            try row.editorAppendRow(line.items);
+            try row.editorInsertRow(data.editor.numRows, line.items);
             line.clearAndFree();
             break;
         },

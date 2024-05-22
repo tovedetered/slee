@@ -5,7 +5,7 @@ const rowop = @import("./rowOps.zig");
 
 pub fn editorInsertChar(c: u16) !void{
     if(data.input.cy == data.editor.numRows){
-        try rowop.editorAppendRow("");
+        try rowop.editorInsertRow(data.editor.numRows, "");
     }
     try rowop.editorRowInsertChar(&data.editor.row[data.input.cy],
         data.input.cx, c);

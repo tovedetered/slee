@@ -13,11 +13,14 @@ pub fn editorRowCxToRx(row: *data.erow, cx: usize) usize{
 	return rx;
 }
 
-pub fn editorAppendRow(row:[]u8) !void{
+pub fn editorInsertRow(at: usize, row:[]u8) !void{
+	if(at < 0 or at > data.editor.numRows) return;
+
 	data.editor.row = try data.editor.ally.realloc(data.editor.row,
 		data.editor.numRows + 1);
+	std.mem.copyBackwards(data.erow, data.editor.row[(at + 1)..data.editor.row.len],
+						  data.editor.row[at..data.editor.row.len - 1]);
 
-	const at = data.editor.numRows;
 	data.editor.row[at].chars = try data.editor.ally.alloc(u8, row.len);
 	@memcpy(data.editor.row[at].chars, row);
 
