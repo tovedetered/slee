@@ -31,12 +31,12 @@ pub fn editorDelChar() !void {
 
 pub fn editorInsertNewLine() !void {
     if(data.input.cx == 0){
-        rowop.editorInsertRow(data.input.cy + 1, "");
+        try rowop.editorInsertRow(data.input.cy + 1, "");
     }else{
         var row: *data.erow = &data.editor.row[data.input.cy];
-        rowop.editorInsertRow(data.input.cy + 1, row.chars[data.input.cx..]);
+        try rowop.editorInsertRow(data.input.cy + 1, row.chars[data.input.cx..]);
         row = &data.editor.row[data.input.cy];
-        rowop.editorUpdateRow(row);
+        try rowop.editorUpdateRow(row);
     }
     data.input.cy += 1;
     data.input.cx = 0;

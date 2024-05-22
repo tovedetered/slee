@@ -24,7 +24,7 @@ pub fn editorProcessKeyPress() !KeyAction {
     const c = try term.editorReadKey();
     switch (c) {
     '\r' => {
-        //TODO: ENTER Key
+        try ediops.editorInsertNewLine();
     },
 
     @intFromEnum(data.editorKey.BACKSPACE),
