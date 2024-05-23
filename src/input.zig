@@ -140,3 +140,32 @@ pub fn editorMoveCursor(key: u16) void {
         data.input.cx = @as(u16, @intCast(rowlen));
     }
 }
+
+pub fn editorPrompt(prompt: []u8) ![]u8{
+    const max_buf_size = 1024; // If the prompt takes up almost a KB,
+    // we are doing something wrong
+    const bufsize: usize = 128;
+    var buf = try std.BoundedArray(u8, max_buf_size).init(bufsize);
+    var buf_len: usize = 0;
+
+    while(true){
+        output.editorSetStatusMessage(prompt, .{buf});
+        output.editorRefreshScreen();
+
+        const c = try term.editorReadKey();
+        if(c == 'r'){
+            if(buf_len != 0){
+                output.editorSetStatusMessage("", .{});
+                buf.resize(buf_len);
+                return buf.slice();
+            }
+        } else if(!std.ascii.isControl(c) and c < 128){
+            if(buf_len == bufsize - 1){
+                bufsize *= 2;
+                try buf.resize(bufsize);
+            }
+            buf[buf_len] = c;
+            buf_len += 1;
+        }
+    }
+}
