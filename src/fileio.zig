@@ -29,7 +29,10 @@ pub fn editorOpen(filename: []const u8) !void {
     @memcpy(data.editor.filename, filename);
 
     const cwd = std.fs.cwd();
-    var file: std.fs.File = try cwd.openFile(filename, .{ .mode = .read_write });
+    var file: std.fs.File = cwd.openFile(filename, .{ .mode = .read_write}) catch |err| switch(err){
+        std.fs.Dir.OpenError.FileNotFound => try cwd.createFile(filename, .{}),
+        else => return err,
+    };
     defer file.close();
 
     const list = std.ArrayList(u8);

@@ -30,7 +30,10 @@ pub fn main() !void {
     defer std.process.argsFree(allocator, args);
 
     if (args.len > 1) {
-        try cont.editorOpen(args[1]);
+        cont.editorOpen(args[1]) catch |err| {
+            std.log.err("ERROR Opening File {s}: {!}", .{args[1], err});
+            return err;
+        };
     }
     
     try output.editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit", .{});
