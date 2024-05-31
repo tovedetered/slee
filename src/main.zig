@@ -31,11 +31,11 @@ pub fn main() !void {
 
     if (args.len > 1) {
         cont.editorOpen(args[1]) catch |err| {
-            std.log.err("ERROR Opening File {s}: {!}", .{args[1], err});
+            std.log.err("ERROR Opening File {s}: {!}", .{ args[1], err });
             return err;
         };
     }
-    
+
     try output.editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit", .{});
 
     while (true) {
@@ -53,7 +53,7 @@ pub fn main() !void {
 
 pub fn panic(msg: []const u8, error_return_trace: ?*std.builtin.StackTrace, n: ?usize) noreturn {
     io.getStdOut().writeAll("\n*****   PANIC   *****\n") catch {};
-    data.editor.denit();
+    //data.editor.denit();
     io.getStdOut().writeAll("\x1B[2J") catch {};
     io.getStdOut().writeAll("\x1B[H") catch {};
     std.builtin.default_panic(msg, error_return_trace, n);
@@ -83,7 +83,7 @@ pub fn logToFile(
         std.debug.print("Failed opening dir: {s}\n", .{dirname});
         return;
     };
-    var file: std.fs.File = dir.openFile("log", .{ .mode = .write_only }) catch |err| switch(err){
+    var file: std.fs.File = dir.openFile("log", .{ .mode = .write_only }) catch |err| switch (err) {
         std.fs.Dir.OpenError.FileNotFound => dir.createFile("log", .{}) catch return,
         else => return,
     };
