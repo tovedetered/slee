@@ -16,6 +16,10 @@ const KeyAction = enum {
     Random,
 };
 
+const inputErrors = error{
+    Max_Size_Exceeded,
+};
+
 pub fn editorProcessKeyPress() !KeyAction {
     const state = struct {
         var quit_times: usize = data.QUIT_TIMES;
@@ -138,27 +142,38 @@ pub fn editorPrompt(comptime prompt: []const u8) ![]u8 {
     const max_buf_size = 1024; // If the prompt takes up almost a KB,
     // we are doing something wrong
     var bufsize: usize = 128;
-    var buf = try std.BoundedArray(u8, max_buf_size).init(bufsize);
+    var buf = try data.editor.ally.alloc(u8, 128);
     var buf_len: usize = 0;
 
     while (true) {
-        try output.editorSetStatusMessage(prompt, .{buf.slice()});
+        try output.editorSetStatusMessage(prompt, .{buf[0..buf_len]});
         try output.editorRefreshScreen();
 
-        const c = try term.editorReadKey();
+        const c: u16 = try term.editorReadKey();
+
         if (c == '\r') {
             if (buf_len != 0) {
                 try output.editorSetStatusMessage("", .{});
-                try buf.resize(buf_len);
-                return buf.slice();
+                const result = data.editor.ally.resize(buf, buf_len);
+                if (result == false) {
+                    buf = try data.editor.ally.realloc(buf, bufsize);
+                }
+                return buf[0..buf_len];
             }
         } else if (c < 128) {
             if (!std.ascii.isControl(@as(u8, @intCast(c)))) {
                 if (buf_len == bufsize - 1) {
                     bufsize *= 2;
-                    try buf.resize(bufsize);
+                    if (bufsize > max_buf_size) {
+                        data.editor.ally.free(buf);
+                        return inputErrors.Max_Size_Exceeded;
+                    }
+                    const result = data.editor.ally.resize(buf, buf_len);
+                    if (result == false) {
+                        buf = try data.editor.ally.realloc(buf, bufsize);
+                    }
                 }
-                buf.slice()[buf_len] = @as(u8, @intCast(c));
+                buf[buf_len] = @as(u8, @intCast(c));
                 buf_len += 1;
             }
         }
