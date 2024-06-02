@@ -65,7 +65,13 @@ pub fn editorOpen(filename: []const u8) !void {
 pub fn editorSave() !void {
     var newFile = false;
     if (data.editor.filename.len == 0) {
-        data.editor.filename = try input.editorPrompt("Save As: {s}");
+        const file = try input.editorPrompt("Save As: {s} (ESC to cancel)");
+        if (file == null) {
+            try output.editorSetStatusMessage("Save Aborted", .{});
+            return;
+        } else {
+            data.editor.filename = file.?;
+        }
         newFile = true;
     }
     const cwd = std.fs.cwd();

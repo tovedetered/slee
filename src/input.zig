@@ -138,7 +138,7 @@ pub fn editorMoveCursor(key: u16) void {
     }
 }
 
-pub fn editorPrompt(comptime prompt: []const u8) ![]u8 {
+pub fn editorPrompt(comptime prompt: []const u8) !?[]u8 {
     const max_buf_size = 1024; // If the prompt takes up almost a KB,
     // we are doing something wrong
     var bufsize: usize = 128;
@@ -150,8 +150,11 @@ pub fn editorPrompt(comptime prompt: []const u8) ![]u8 {
         try output.editorRefreshScreen();
 
         const c: u16 = try term.editorReadKey();
-
-        if (c == '\r') {
+        if (c == '\x1b') {
+            try output.editorSetStatusMessage("", .{});
+            data.editor.ally.free(buf);
+            return null;
+        } else if (c == '\r') {
             if (buf_len != 0) {
                 try output.editorSetStatusMessage("", .{});
                 const result = data.editor.ally.resize(buf, buf_len);
