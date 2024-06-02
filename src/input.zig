@@ -154,6 +154,13 @@ pub fn editorPrompt(comptime prompt: []const u8) !?[]u8 {
             try output.editorSetStatusMessage("", .{});
             data.editor.ally.free(buf);
             return null;
+        } else if (c == @intFromEnum(data.editorKey.DEL_KEY) or c == util.ctrlKey('h') or
+            c == @intFromEnum(data.editorKey.BACKSPACE))
+        {
+            if (buf_len != 0) {
+                buf[buf_len] = 0;
+                buf_len -= 1;
+            }
         } else if (c == '\r') {
             if (buf_len != 0) {
                 try output.editorSetStatusMessage("", .{});
