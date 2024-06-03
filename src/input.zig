@@ -8,6 +8,7 @@ const data = @import("./data.zig");
 const ediops = @import("./editorOps.zig");
 const fileops = @import("./fileio.zig");
 const output = @import("./output.zig");
+const find = @import("./find.zig");
 
 const KeyAction = enum {
     Quit,
@@ -41,15 +42,20 @@ pub fn editorProcessKeyPress() !KeyAction {
             try fileops.editorSave();
         },
 
+        util.ctrlKey('f') => {
+            find.editorFind();
+        },
+
         util.ctrlKey('q') => {
             if (data.editor.dirty > 0 and state.quit_times > 0) {
-                try output.editorSetStatusMessage("WARNING: File has unsaved changes. Press Ctrl-Q {d} more times to quit.", .{state.quit_times});
+                output.editorSetStatusMessage("WARNING: File has unsaved changes. Press Ctrl-Q {d} more times to quit.", .{state.quit_times});
                 state.quit_times -= 1;
                 return .NoOp;
             } else {
                 return .Quit;
             }
         },
+
         @intFromEnum(data.editorKey.ARROW_LEFT),
         @intFromEnum(data.editorKey.ARROW_RIGHT),
         @intFromEnum(data.editorKey.ARROW_UP),
@@ -146,12 +152,12 @@ pub fn editorPrompt(comptime prompt: []const u8) !?[]u8 {
     var buf_len: usize = 0;
 
     while (true) {
-        try output.editorSetStatusMessage(prompt, .{buf[0..buf_len]});
+        output.editorSetStatusMessage(prompt, .{buf[0..buf_len]});
         try output.editorRefreshScreen();
 
         const c: u16 = try term.editorReadKey();
         if (c == '\x1b') {
-            try output.editorSetStatusMessage("", .{});
+            output.editorSetStatusMessage("", .{});
             data.editor.ally.free(buf);
             return null;
         } else if (c == @intFromEnum(data.editorKey.DEL_KEY) or c == util.ctrlKey('h') or
@@ -163,7 +169,7 @@ pub fn editorPrompt(comptime prompt: []const u8) !?[]u8 {
             }
         } else if (c == '\r') {
             if (buf_len != 0) {
-                try output.editorSetStatusMessage("", .{});
+                output.editorSetStatusMessage("", .{});
                 const result = data.editor.ally.resize(buf, buf_len);
                 if (result == false) {
                     buf = try data.editor.ally.realloc(buf, bufsize);

@@ -67,7 +67,7 @@ pub fn editorSave() !void {
     if (data.editor.filename.len == 0) {
         const file = try input.editorPrompt("Save As: {s} (ESC to cancel)");
         if (file == null) {
-            try output.editorSetStatusMessage("Save Aborted", .{});
+            output.editorSetStatusMessage("Save Aborted", .{});
             return;
         } else {
             data.editor.filename = file.?;
@@ -96,6 +96,6 @@ pub fn editorSave() !void {
 
     try cwd.rename("temp9089", data.editor.filename);
 
-    try output.editorSetStatusMessage("{d} bytes written to disk", .{buf.len});
+    output.editorSetStatusMessage("{d} bytes written to disk", .{buf.len});
     data.editor.dirty = 0;
 }

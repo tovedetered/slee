@@ -36,7 +36,7 @@ pub fn main() !void {
         };
     }
 
-    try output.editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit", .{});
+    output.editorSetStatusMessage("HELP: Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find", .{});
 
     while (true) {
         try out.editorRefreshScreen();

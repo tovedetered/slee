@@ -124,8 +124,11 @@ pub fn editorDrawMessageBar(str: *string.string) !void {
     }
 }
 
-pub fn editorSetStatusMessage(comptime fmt: []const u8, args: anytype) !void {
+pub fn editorSetStatusMessage(comptime fmt: []const u8, args: anytype) void {
     data.editor.ally.free(data.editor.statusmsg);
-    data.editor.statusmsg = try std.fmt.allocPrint(data.editor.ally, fmt, args);
+    data.editor.statusmsg = std.fmt.allocPrint(data.editor.ally, fmt, args) catch |err| errblock: {
+        std.log.err("(recoverable) In output.zig - editorSetStatusMessage(): {!}", .{err});
+        break :errblock "ERROR when setting status message";
+    };
     data.editor.statustime = time.milliTimestamp();
 }

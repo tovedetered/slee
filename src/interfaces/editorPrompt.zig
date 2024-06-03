@@ -10,13 +10,13 @@ pub fn editorPrompt(comptime prompt: []const u8) ![]u8 {
     var buf_len: usize = 0;
 
     while (true) {
-        try output.editorSetStatusMessage(prompt, .{buf});
+        output.editorSetStatusMessage(prompt, .{buf});
         try output.editorRefreshScreen();
 
         const c = try term.editorReadKey();
         if (c == 'r') {
             if (buf_len != 0) {
-                try output.editorSetStatusMessage("", .{});
+                output.editorSetStatusMessage("", .{});
                 try buf.resize(buf_len);
                 return buf.slice();
             }
