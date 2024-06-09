@@ -1,6 +1,6 @@
-# SLEEP
+# SLEE
 
-A Systems Level Easy Editor Program
+A Systems Level Easy Editor
 
 Adapted from https://viewsourcecode.org/snaptoken/kilo into Ziglang
 
