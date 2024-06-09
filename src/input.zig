@@ -158,7 +158,7 @@ pub fn editorPrompt(comptime prompt: []const u8, callback: ?fn ([]const u8, u16)
         const c: u16 = try term.editorReadKey();
         if (c == '\x1b') {
             output.editorSetStatusMessage("", .{});
-            if (callback != null) callback.?(buf, c);
+            if (callback != null) callback.?(buf[0..buf_len], c);
             data.editor.ally.free(buf);
             return null;
         } else if (c == @intFromEnum(data.editorKey.DEL_KEY) or c == util.ctrlKey('h') or
@@ -175,7 +175,7 @@ pub fn editorPrompt(comptime prompt: []const u8, callback: ?fn ([]const u8, u16)
                 if (result == false) {
                     buf = try data.editor.ally.realloc(buf, bufsize);
                 }
-                if (callback != null) callback.?(buf, c);
+                if (callback != null) callback.?(buf[0..buf_len], c);
                 return buf[0..buf_len];
             }
         } else if (c < 128) {
@@ -196,6 +196,6 @@ pub fn editorPrompt(comptime prompt: []const u8, callback: ?fn ([]const u8, u16)
             }
         }
 
-        if (callback != null) callback.?(buf, c);
+        if (callback != null) callback.?(buf[0..buf_len], c);
     }
 }
