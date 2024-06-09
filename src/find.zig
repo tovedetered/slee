@@ -11,10 +11,8 @@ fn editorFindCallback(query: []const u8, key: u16) void {
     }
     for (0..data.editor.numRows) |i| {
         const row = &data.editor.row[i];
-        std.log.debug("trying to find {s} in {s}", .{ query, row.chars });
         const result = ascii.indexOfIgnoreCase(row.chars, query);
         if (result != null) {
-            std.log.debug("setting cy to {d}", .{i});
             data.input.cy = i;
             data.input.cx = rowOps.editorRowRxToCx(row, result.?);
             data.editor.rowoff = data.editor.numRows;

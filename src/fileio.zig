@@ -75,7 +75,6 @@ pub fn editorSave() !void {
         newFile = true;
     }
     const cwd = std.fs.cwd();
-    std.log.debug("what filename is: {s}", .{data.editor.filename});
     var tmpFile: std.fs.File = try cwd.createFile("temp9089", .{});
     errdefer tmpFile.close();
 

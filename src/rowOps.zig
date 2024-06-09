@@ -100,11 +100,9 @@ pub fn editorDelRow(at: usize) !void {
     if (at < 0 or at >= data.editor.numRows) return;
     editorFreeRow(&data.editor.row[at]);
     std.mem.copyForwards(data.erow, row[at..], row[(at + 1)..]);
-    std.log.debug("Fn: editorDelRow; Mod: rowOps.zig; Before: numRows: {d}, len:{d}", .{ data.editor.numRows, data.editor.row.len });
     row = try data.editor.ally.realloc(row, row.len - 1);
     data.editor.numRows -= 1;
     data.editor.row.len -= 1;
-    std.log.debug("Fn: editorDelRow; Mod: rowOps.zig; After: numRows: {d}, len:{d}", .{ data.editor.numRows, data.editor.row.len });
     data.editor.dirty += 1;
 }
 
