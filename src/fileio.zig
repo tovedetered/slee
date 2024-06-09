@@ -65,7 +65,7 @@ pub fn editorOpen(filename: []const u8) !void {
 pub fn editorSave() !void {
     var newFile = false;
     if (data.editor.filename.len == 0) {
-        const file = try input.editorPrompt("Save As: {s} (ESC to cancel)");
+        const file = try input.editorPrompt("Save As: {s} (ESC to cancel)", null);
         if (file == null) {
             output.editorSetStatusMessage("Save Aborted", .{});
             return;

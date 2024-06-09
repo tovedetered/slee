@@ -6,7 +6,7 @@ const rowOps = @import("./rowOps.zig");
 const ascii = std.ascii;
 
 pub fn editorFind() void {
-    const query = input.editorPrompt("Search {s} (ESC to cancel)") catch |err| {
+    const query = input.editorPrompt("Search {s} (ESC to cancel)", null) catch |err| {
         std.log.err("(recoverable) In find.zig - editorFind(): {!}", .{err});
         output.editorSetStatusMessage("ERROR: Search failed: check prompt", .{});
         return;
