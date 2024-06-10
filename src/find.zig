@@ -6,8 +6,22 @@ const rowOps = @import("./rowOps.zig");
 const ascii = std.ascii;
 
 fn editorFindCallback(query: []const u8, key: u16) void {
+    const K = data.editorKey;
+    const matches = struct {
+        var last_match: i64 = -1;
+        var direction: i2 = 1;
+    };
     if (key == '\r' or key == '\x1b') {
+        matches.last_match = -1;
+        matches.direction = 1;
         return;
+    } else if (key == @intFromEnum(K.ARROW_RIGHT) or key == @intFromEnum(K.ARROW_DOWN)) {
+        matches.direction = 1;
+    } else if (key == @intFromEnum(K.ARROW_LEFT) or key == @intFromEnum(K.ARROW_UP)) {
+        matches.direction = -1;
+    } else {
+        matches.last_match = -1;
+        matches.direction = 1;
     }
     for (0..data.editor.numRows) |i| {
         const row = &data.editor.row[i];
