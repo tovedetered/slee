@@ -23,11 +23,21 @@ fn editorFindCallback(query: []const u8, key: u16) void {
         matches.last_match = -1;
         matches.direction = 1;
     }
+
+    if (matches.last_match == -1) matches.direction = 1;
+    var current: i64 = matches.last_match;
     for (0..data.editor.numRows) |i| {
-        const row = &data.editor.row[i];
+        _ = i;
+        current += matches.direction;
+        if (current == -1) {
+            current = @as(i64, @intCast(data.editor.numRows - 1));
+        } else if (current == data.editor.numRows) current = 0;
+
+        const row = &data.editor.row[@as(usize, @intCast(current))];
         const result = ascii.indexOfIgnoreCase(row.chars, query);
-        if (result != null) {
-            data.input.cy = i;
+        if (result != null) { //we found a match
+            matches.last_match = current;
+            data.input.cy = @as(usize, @intCast(current));
             data.input.cx = rowOps.editorRowRxToCx(row, result.?);
             data.editor.rowoff = data.editor.numRows;
             break;
@@ -48,10 +58,12 @@ pub fn editorFind() void {
         output.editorSetStatusMessage("ERROR: Search failed: check prompt", .{});
         return;
     };
-    if (query == null) return;
+    if (query == null) {
+        I.cx = saved_cx;
+        I.cy = saved_cy;
+        E.coloff = saved_coloff;
+        E.rowoff = saved_rowoff;
+        return;
+    }
     data.editor.ally.free(query.?);
-    I.cx = saved_cx;
-    I.cy = saved_cy;
-    E.coloff = saved_coloff;
-    E.rowoff = saved_rowoff;
 }
