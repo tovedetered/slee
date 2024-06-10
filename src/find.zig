@@ -53,7 +53,7 @@ pub fn editorFind() void {
     const saved_coloff = E.coloff;
     const saved_rowoff = E.rowoff;
 
-    const query = input.editorPrompt("Search {s} (ESC to cancel)", editorFindCallback) catch |err| {
+    const query = input.editorPrompt("Search {s} (Use ENTER/ARROWS/ESC)", editorFindCallback) catch |err| {
         std.log.err("(recoverable) In find.zig - editorFind(): {!}", .{err});
         output.editorSetStatusMessage("ERROR: Search failed: check prompt", .{});
         return;
