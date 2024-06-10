@@ -22,6 +22,13 @@ fn editorFindCallback(query: []const u8, key: u16) void {
 }
 
 pub fn editorFind() void {
+    const I = &data.input;
+    const E = &data.editor;
+    const saved_cx = I.cx;
+    const saved_cy = I.cy;
+    const saved_coloff = E.coloff;
+    const saved_rowoff = E.rowoff;
+
     const query = input.editorPrompt("Search {s} (ESC to cancel)", editorFindCallback) catch |err| {
         std.log.err("(recoverable) In find.zig - editorFind(): {!}", .{err});
         output.editorSetStatusMessage("ERROR: Search failed: check prompt", .{});
@@ -29,4 +36,8 @@ pub fn editorFind() void {
     };
     if (query == null) return;
     data.editor.ally.free(query.?);
+    I.cx = saved_cx;
+    I.cy = saved_cy;
+    E.coloff = saved_coloff;
+    E.rowoff = saved_rowoff;
 }
