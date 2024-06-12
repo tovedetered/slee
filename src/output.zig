@@ -72,9 +72,15 @@ pub fn editorDrawRows(ab: *string.string) !void {
                 @as(i65, @intCast(data.editor.coloff));
             if (len < 0) len = 0;
             if (len > data.editor.screenCols) len = data.editor.screenCols;
-            if (len != 0) {
-                try ab.append(data.editor.row[filerow]
-                    .render[data.editor.coloff .. data.editor.coloff + @as(u16, @intCast(len))]);
+            const bar: *const []u8 = &data.editor.row[filerow].render[data.editor.coloff..];
+            for (0..@as(usize, @intCast(len))) |j| {
+                if (std.ascii.isDigit(bar.*[j])) {
+                    try ab.append("\x1b[31m");
+                    try ab.append(&.{bar.*[j]});
+                    try ab.append("\x1b[39m");
+                } else {
+                    try ab.append(&.{bar.*[j]});
+                }
             }
         }
         try ab.*.append("\x1b[K");
