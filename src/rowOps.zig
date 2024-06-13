@@ -37,6 +37,7 @@ pub fn editorInsertRow(at: usize, row: []u8) !void {
     @memcpy(data.editor.row[at].chars, row);
 
     data.editor.row[at].render = &.{};
+    data.editor.row[at].highlight = &.{};
     try editorUpdateRow(&data.editor.row[at]);
     data.editor.numRows += 1;
     data.editor.dirty += 1;
@@ -93,6 +94,7 @@ pub fn editorRowDelChar(row: *data.erow, at: usize) !void {
 fn editorFreeRow(row: *data.erow) void {
     data.editor.ally.free(row.chars);
     data.editor.ally.free(row.render);
+    data.editor.ally.free(row.highlight);
 }
 
 pub fn editorDelRow(at: usize) !void {

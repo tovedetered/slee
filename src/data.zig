@@ -55,6 +55,7 @@ pub const InputData = struct {
 pub const erow = struct {
     chars: []u8,
     render: []u8,
+    highlight: []u8,
 };
 
 //***** Values *****
