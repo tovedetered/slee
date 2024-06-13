@@ -1,6 +1,7 @@
 const std = @import("std");
 const io = @import("std").io;
 const data = @import("./data.zig");
+const syntax = @import("./syntax_highlighting.zig");
 
 pub fn editorRowCxToRx(row: *data.erow, cx: usize) usize {
     var rx: usize = 0;
@@ -68,6 +69,7 @@ pub fn editorUpdateRow(row: *data.erow) !void {
             idx += 1;
         }
     }
+    try syntax.editorUpdateSyntax(row);
 }
 
 pub fn editorRowInsertChar(row: *data.erow, at_: usize, key: u16) !void {
