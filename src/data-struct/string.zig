@@ -12,7 +12,7 @@ pub const string = struct {
         self.b = new;
         self.len += s.len;
     }
-    pub fn vappend(self: *string, s: []u8) void {
+    pub fn vappend(self: *string, s: []u8) !void {
         var new: []u8 = try self.alloc.realloc(self.b, self.len + s.len);
         std.mem.copyForwards(u8, new[self.len .. self.len + s.len], s[0..s.len]);
         self.b = new;
