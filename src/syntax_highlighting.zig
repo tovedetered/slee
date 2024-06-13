@@ -11,3 +11,11 @@ pub fn editorUpdateSyntax(row: *data.erow) !void {
         }
     }
 }
+
+pub fn editorSyntaxToColor(hl: data.editorHighlight) u8 {
+    const H = data.editorHighlight;
+    return switch (hl) {
+        H.HL_NUMBER => 31,
+        else => 37,
+    };
+}
