@@ -18,6 +18,14 @@ pub const string = struct {
         self.b = new;
         self.len += s.len;
     }
+    pub fn print(self: *string, comptime fmt: []const u8, args: anytype, alloc: std.mem.Allocator) !void {
+        const to_add = try std.fmt.allocPrint(alloc, fmt, args);
+
+        var new: []u8 = try self.alloc.realloc(self.b, self.len + to_add.len);
+        std.mem.copyForwards(u8, new[self.len .. self.len + to_add.len], to_add[0..to_add.len]);
+        self.b = new;
+        self.len += to_add.len;
+    }
     pub fn free(self: *string) void {
         self.alloc.free(self.b);
     }

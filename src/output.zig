@@ -6,6 +6,7 @@ const time = @import("std").time;
 const data = @import("./data.zig");
 const string = @import("./data-struct/string.zig");
 const rowOp = @import("./rowOps.zig");
+const syntax = @import("./syntax_highlighting.zig");
 
 pub fn editorScroll() void {
     data.input.rx = 0;
@@ -72,16 +73,21 @@ pub fn editorDrawRows(ab: *string.string) !void {
                 @as(i65, @intCast(data.editor.coloff));
             if (len < 0) len = 0;
             if (len > data.editor.screenCols) len = data.editor.screenCols;
+
             const bar: *const []u8 = &data.editor.row[filerow].render[data.editor.coloff..];
+            const hl: *const []data.editorHighlight = &data.editor.row[filerow].highlight[data.editor.coloff..];
+
             for (0..@as(usize, @intCast(len))) |j| {
-                if (std.ascii.isDigit(bar.*[j])) {
-                    try ab.append("\x1b[31m");
+                if (hl.*[j] == data.editorHighlight.HL_NORMAL) {
+                    try ab.append("\x1b[39m"); //default color
                     try ab.append(&.{bar.*[j]});
-                    try ab.append("\x1b[39m");
                 } else {
-                    try ab.append(&.{bar.*[j]});
+                    const color: u8 = syntax.editorSyntaxToColor(hl.*[j]);
+                    try ab.print("\x1b[{d}m", .{color}, data.editor.ally);
+                    try ab.append(&.{bar.*[j]}); // highlight color
                 }
             }
+            try ab.append("\x1b[39m");
         }
         try ab.*.append("\x1b[K");
         try ab.*.append("\r\n");
