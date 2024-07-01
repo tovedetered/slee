@@ -18,7 +18,7 @@ pub const editorKey = enum(u16) {
     PAGE_DOWN,
 };
 
-pub const editorHighlight = enum(u8) { HL_NORMAL = 0, HL_NUMBER };
+pub const editorHighlight = enum(i8) { HL_VOID = -1, HL_NORMAL = 0, HL_NUMBER };
 
 //***** Defs *****
 pub const EditorConfig = struct {

@@ -77,13 +77,21 @@ pub fn editorDrawRows(ab: *string.string) !void {
             const bar: *const []u8 = &data.editor.row[filerow].render[data.editor.coloff..];
             const hl: *const []data.editorHighlight = &data.editor.row[filerow].highlight[data.editor.coloff..];
 
+            var current_color: i9 = -1;
+
             for (0..@as(usize, @intCast(len))) |j| {
                 if (hl.*[j] == data.editorHighlight.HL_NORMAL) {
-                    try ab.append("\x1b[39m"); //default color
+                    if (current_color != -1) {
+                        try ab.append("\x1b[39m"); //default color
+                        current_color = -1;
+                    }
                     try ab.append(&.{bar.*[j]});
                 } else {
                     const color: u8 = syntax.editorSyntaxToColor(hl.*[j]);
-                    try ab.print("\x1b[{d}m", .{color}, data.editor.ally);
+                    if (color != current_color) {
+                        current_color = color;
+                        try ab.print("\x1b[{d}m", .{color}, data.editor.ally);
+                    }
                     try ab.append(&.{bar.*[j]}); // highlight color
                 }
             }
@@ -126,7 +134,6 @@ pub fn editorDrawStatusBar(str: *string.string) !void {
     try str.append("\x1b[m");
     try str.append("\r\n");
 }
-
 pub fn editorDrawMessageBar(str: *string.string) !void {
     try str.append("\x1b[K");
     var len: usize = data.editor.statusmsg.len;
