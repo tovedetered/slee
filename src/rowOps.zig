@@ -1,6 +1,7 @@
 const std = @import("std");
 const io = @import("std").io;
 const data = @import("./data.zig");
+const syntax = @import("./syntax_highlighting.zig");
 
 pub fn editorRowCxToRx(row: *data.erow, cx: usize) usize {
     var rx: usize = 0;
@@ -37,6 +38,7 @@ pub fn editorInsertRow(at: usize, row: []u8) !void {
     @memcpy(data.editor.row[at].chars, row);
 
     data.editor.row[at].render = &.{};
+    data.editor.row[at].highlight = &.{};
     try editorUpdateRow(&data.editor.row[at]);
     data.editor.numRows += 1;
     data.editor.dirty += 1;
@@ -67,6 +69,7 @@ pub fn editorUpdateRow(row: *data.erow) !void {
             idx += 1;
         }
     }
+    try syntax.editorUpdateSyntax(row);
 }
 
 pub fn editorRowInsertChar(row: *data.erow, at_: usize, key: u16) !void {
@@ -93,6 +96,7 @@ pub fn editorRowDelChar(row: *data.erow, at: usize) !void {
 fn editorFreeRow(row: *data.erow) void {
     data.editor.ally.free(row.chars);
     data.editor.ally.free(row.render);
+    data.editor.ally.free(row.highlight);
 }
 
 pub fn editorDelRow(at: usize) !void {
